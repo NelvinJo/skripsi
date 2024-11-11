@@ -81,7 +81,7 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="opname.php">
+						<a class="sidebar-link" href="opname2.php">
               <i class="align-middle" data-feather="bar-chart"></i> <span class="align-middle">Stock Opname</span>
             </a>
 					</li>

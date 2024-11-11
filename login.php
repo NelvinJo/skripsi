@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php
-    include "includes/config.php";
-    ob_start();
-    session_start();
+<?php
+include "includes/config.php";
+ob_start();
+session_start();
 
-    if (isset($_POST["submitlogin"])) {
-        // Sanitize email and hash the password
-        $emailuser = mysqli_real_escape_string($connection, $_POST["useremail"]);
-        $passuser = md5($_POST["pass"]);
+if (isset($_POST["submitlogin"])) {
+    // Sanitize email and hash the password
+    $emailuser = mysqli_real_escape_string($connection, $_POST["useremail"]);
+    $passuser = md5($_POST["pass"]);
 
-        // Query to check if email and password match
-        $sql_login = mysqli_query($connection, "SELECT * FROM admin WHERE Email = '$emailuser' AND Password = '$passuser'");
+    // Query to check if email and password match
+    $sql_login = mysqli_query($connection, "SELECT * FROM admin WHERE Email = '$emailuser' AND Password = '$passuser'");
 
-        if (mysqli_num_rows($sql_login) > 0) {
-            $row_admin = mysqli_fetch_array($sql_login);
+    if (mysqli_num_rows($sql_login) > 0) {
+        $row_admin = mysqli_fetch_array($sql_login);
 
-            // Set session variables based on role
-            $_SESSION['Email'] = $emailuser;
-            $_SESSION['Role'] = $row_admin['Role'];
+        // Set session variables based on email and role
+        $_SESSION['Email'] = $emailuser;
+        $_SESSION['Role'] = $row_admin['Role'];
 
-            // Redirect based on role
-            header("location:menuutama.php");
-            exit();
-        } else {
-            $error_message = "Invalid email or password. Please try again.";
-        }
+        // Redirect to the main menu (menuutama.php) or dashboard
+        header("Location: menuutama.php");
+        exit();
+    } else {
+        $error_message = "Invalid email or password. Please try again.";
     }
-    ?>
+}
+?>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login | Toko Arloji Pasar Baru</title>

@@ -1,11 +1,14 @@
 <?php
-require 'authMiddleware.php'; // Panggil file middleware
+session_start();
 
-// Panggil fungsi untuk mengecek login
-checkLogin();
+// Cek apakah sesi Email sudah ada
+if (!isset($_SESSION['Email'])) {
+    // Jika tidak ada sesi, arahkan ke halaman login
+    header("Location: login.php");
+    exit();
+}
 
-// Kode halaman 'dashboard' atau konten halaman yang dilindungi
-echo "Selamat datang di dashboard, " . htmlspecialchars($_SESSION['Email']) . "!";
+// Jika ada, tampilkan halaman menu utama
 ?>
 <?php
 // Koneksi ke database
