@@ -1,54 +1,50 @@
 <?php
 include "includes/config.php";
 
-if (isset($_POST['Simpan'])) {
-    if (isset($_REQUEST['inputkode'])) {
-        $kategorikode = $_REQUEST['inputkode'];
-    }
-    if (!empty($kategorikode)) {
-        $kategorikode = $_REQUEST['inputkode'];
-    } else {
-        echo "<h1>Anda harus mengisi data Kode Kategori</h1>";
-        die('Anda harus memasukkan datanya');
-    }
-
-    $checkKategori = mysqli_query($connection, "SELECT * FROM kategori WHERE KategoriID = '$kategorikode'");
-    
-    if (mysqli_num_rows($checkKategori) == 0) {
+// Proses simpan kategori
+if (isset($_POST['SimpanKategori'])) {
+    if (!empty($_POST['inputkategori'])) {
         $namakategori = $_POST['inputkategori'];
-
-        mysqli_query($connection, "INSERT INTO kategori (KategoriID, NamaKategori) 
-                                   VALUES ('$kategorikode', '$namakategori')");
-    }
-
-    if (isset($_REQUEST['kodesub'])) {
-        $subkode = $_REQUEST['kodesub'];
-    }
-    if (!empty($subkode)) {
-        $subkode = $_REQUEST['kodesub'];
+        
+        // Memeriksa apakah kategori sudah ada berdasarkan nama
+        $checkKategori = mysqli_query($connection, "SELECT * FROM kategori WHERE NamaKategori = '$namakategori'");
+        
+        if (mysqli_num_rows($checkKategori) == 0) {
+            mysqli_query($connection, "INSERT INTO kategori (NamaKategori) VALUES ('$namakategori')");
+        }
     } else {
-        echo "<h1>Anda harus mengisi data Kode Sub Kategori</h1>";
+        echo "<h1>Anda harus mengisi Nama Kategori</h1>";
+        die('Anda harus memasukkan data Nama Kategori');
+    }
+}
+
+// Proses simpan sub kategori
+if (isset($_POST['SimpanSubKategori'])) {
+    if (!empty($_POST['kategoridropdown']) && !empty($_POST['inputsub'])) {
+        $kodekategori = $_POST['kategoridropdown'];
+        $namasub = $_POST['inputsub'];
+
+        mysqli_query($connection, "INSERT INTO subkategori (KategoriID, NamaSubKategori) VALUES ('$kodekategori', '$namasub')");
+    } else {
+        echo "<h1>Anda harus memilih Kategori dan mengisi Nama Sub Kategori</h1>";
         die('Anda harus memasukkan datanya');
     }
-
-    $kodekategori = $kategorikode;
-    $namasub = $_POST['inputsub'];
-
-    mysqli_query($connection, "INSERT INTO subkategori (SubID, KategoriID, NamaSubKategori) 
-                               VALUES ('$subkode', '$kodekategori', '$namasub')");
 
     header("Location: kategori.php");
     exit();
 }
 
+// Mengambil data kategori untuk dropdown
+$datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+<meta name="description" content="Responsive Admin & Dashboard Template based on Bootstrap 5">
 <meta name="author" content="AdminKit">
 <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
@@ -67,51 +63,53 @@ if (isset($_POST['Simpan'])) {
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
                 <div class="jumbotron jumbotron-fluid">
-                    <div class="container">
-                        <h1 class="display-4">Input Kategori</h1>
-                    </div>
                 </div>
+
+                <!-- Form untuk Input Kategori -->
                 <form method="POST">
+                    <h2>Input Kategori Baru</h2>
                     <div class="form-group row">
-                        <label for="kodekategori" class="col-sm-2 col-form-label">Kode Kategori</label>
+                        <label for="inputkategori" class="col-sm-2 col-form-label">Nama Kategori</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="kodekategori" name="inputkode" placeholder="Kode Kategori" maxlength="4">
+                            <input type="text" class="form-control" name="inputkategori" id="inputkategori" placeholder="Nama Kategori">
                         </div>
                     </div>
-
-                    <div class="form-group row">
-                        <label for="namakategori" class="col-sm-2 col-form-label">Nama Kategori</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputkategori" id="namakategori" placeholder="Nama Kategori">
-                        </div>
-                    </div>
-
-                    <div class="jumbotron jumbotron-fluid mt-4">
-                        <div class="container">
-                            <h1 class="display-5">Input Sub Kategori</h1>
-                        </div>
-                    </div>
-
-                    <form method="POST">
-                    <div class="form-group row">
-                        <label for="kodesub" class="col-sm-2 col-form-label">Kode Sub Kategori</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="kodesub" name="kodesub" placeholder="Kode Sub Kategori" maxlength="4">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="namasub" class="col-sm-2 col-form-label">Nama Sub Kategori</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputsub" id="namasub" placeholder="Nama Sub Kategori">
-                        </div>
-                    </div>
-
                     <div class="form-group row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10 button-group">
-                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="Simpan">
-                            <input type="reset" class="btn btn-secondary" value="Batal" name="Batal">
+                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="SimpanKategori">
+                            <input type="reset" class="btn btn-secondary" value="Reset" name="Reset">
+                        </div>
+                    </div>
+                </form>
+
+                <hr>
+
+                <!-- Form untuk Input Sub Kategori -->
+                <form method="POST">
+                    <h2>Input Sub Kategori</h2>
+                    <div class="form-group row">
+                        <label for="kategoridropdown" class="col-sm-2 col-form-label">Nama Kategori</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="kategoridropdown" id="kategoridropdown">
+                                <option value="">Pilih Kategori</option>
+                                <?php while ($row = mysqli_fetch_array($datakategori)) { ?>
+                                    <option value="<?php echo $row['KategoriID']; ?>"><?php echo $row['NamaKategori']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputsub" class="col-sm-2 col-form-label">Nama Sub Kategori</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="inputsub" id="inputsub" placeholder="Nama Sub Kategori">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10 button-group">
+                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="SimpanSubKategori">
+                            <input type="reset" class="btn btn-secondary" value="Reset" name="Reset">
                         </div>
                     </div>
                 </form>

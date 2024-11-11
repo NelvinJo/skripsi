@@ -41,19 +41,19 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="tersedia2.php">
+						<a class="sidebar-link" href="tersedia.php">
               <i class="align-middle" data-feather="box"></i> <span class="align-middle">Barang Tersedia</span>
             </a>
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="masuk2.php">
+						<a class="sidebar-link" href="masuk.php">
               <i class="align-middle" data-feather="shopping-bag"></i> <span class="align-middle">Barang Masuk</span>
             </a>
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="keluar2.php">
+						<a class="sidebar-link" href="keluar.php">
               <i class="align-middle" data-feather="package"></i> <span class="align-middle">Barang Keluar</span>
             </a>
 					</li>
@@ -71,7 +71,7 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="kategori2.php">
+						<a class="sidebar-link" href="kategori.php">
               <i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
             </a>
 					</li>

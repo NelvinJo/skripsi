@@ -1,164 +1,218 @@
 <?php
+// Koneksi database
 include "includes/config.php";
 
-if (isset($_POST['Simpan'])) {
-    if (isset($_REQUEST['inputkode'])) {
-        $masukkode = $_REQUEST['inputkode'];
-    }
-    if (!empty($masukkode)) {
-        $masukkode = $_REQUEST['inputkode'];
-    } else {
-        echo "<h1>Anda harus mengisi data Kode Barang Masuk</h1>";
-        die('Anda harus memasukkan datanya');
-    }
-
-    $checkMasuk = mysqli_query($connection, "SELECT * FROM barangmasuk WHERE BMID = '$masukkode'");
-    
-    if (mysqli_num_rows($checkMasuk) == 0) {
-        $namasupp = $_POST['inputsupplier'];
-        $tanggal = $_POST['inputtanggal'];
-
-        mysqli_query($connection, "INSERT INTO barangmasuk (BMID, NamaSupplier, TanggalMasuk) 
-                                   VALUES ('$masukkode', '$namasupp', '$tanggal')");
-    }
-
-    if (isset($_REQUEST['kodedm'])) {
-        $dmkode = $_REQUEST['kodedm'];
-    }
-    if (!empty($dmkode)) {
-        $dmkode = $_REQUEST['kodedm'];
-    } else {
-        echo "<h1>Anda harus mengisi data Kode Detail Masuk</h1>";
-        die('Anda harus memasukkan datanya');
-    }
-
-    $kodebm = $masukkode;
-    $namaspek = $_POST['inputspek'];
-    $jumlahbarang = $_POST['jumlahbarang'];
-
-    mysqli_query($connection, "INSERT INTO detailbarangmasuk (DetailMasukID, BMID, SpesifikasiID, JumlahMasuk) 
-                               VALUES ('$dmkode', '$kodebm', '$namaspek', '$jumlahbarang')");
-
-    $updateStok = mysqli_query($connection, "UPDATE spesifikasibarang 
-                                             SET JumlahStokBarang = JumlahStokBarang + '$jumlahbarang' 
-                                             WHERE SpesifikasiID = '$namaspek'");
-
-    if (!$updateStok) {
-        echo "<h1>Gagal mengupdate stok barang</h1>";
-        die('Terjadi kesalahan dalam mengupdate stok barang');
-    }
-
-    header("Location: masuk.php");
-    exit();
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-$datasupplier = mysqli_query($connection, "SELECT * FROM supplier");
-$dataspek = mysqli_query($connection, "SELECT * FROM spesifikasibarang");
+// Fetch data for Supplier dropdown
+$supplierData = [];
+$supplierQuery = "SELECT SupplierID, NamaSupplier FROM supplier";
+$result = $conn->query($supplierQuery);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $supplierData[] = $row;
+    }
+}
+
+// Fetch data for ComboBox: combining SubKategori, Barang, Bentuk, and Warna
+$comboBoxData = [];
+$comboBoxQuery = "SELECT
+    SubKategori.NamaSubKategori,
+    BarangTersedia.BarangID,
+    BarangTersedia.NamaBarang,
+    Bentuk.BentukID,
+    Bentuk.NamaBentuk,
+    Warna.WarnaID,
+    Warna.NamaWarna,
+    SpesifikasiBarang.SpesifikasiID
+FROM
+    SpesifikasiBarang
+JOIN
+    BarangTersedia ON SpesifikasiBarang.BarangID = BarangTersedia.BarangID
+JOIN
+    SubKategori ON BarangTersedia.SubID = SubKategori.SubID
+JOIN
+    Bentuk ON SpesifikasiBarang.BentukID = Bentuk.BentukID
+JOIN
+    Warna ON SpesifikasiBarang.WarnaID = Warna.WarnaID";
+
+$result = $conn->query($comboBoxQuery);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $comboBoxData[] = [
+            "SpesifikasiID" => $row["SpesifikasiID"],
+            "display" => "{$row['NamaSubKategori']} - {$row['NamaBarang']} - {$row['NamaBentuk']} - {$row['NamaWarna']}"
+        ];
+    }
+}
+
+// Handle form submission to save data
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
+    $supplier_id = $_POST['supplier_id'];
+    $tanggal_masuk = $_POST['tanggal_masuk'];
+    $spesifikasi_ids = $_POST['spesifikasi_id'];
+    $jumlah_masuk = $_POST['jumlah_masuk'];
+
+    // Insert into barangmasuk table to get BMID
+    $stmt = $conn->prepare("INSERT INTO barangmasuk (SupplierID, TanggalMasuk) VALUES (?, ?)");
+    $stmt->bind_param("is", $supplier_id, $tanggal_masuk);
+    $stmt->execute();
+    $bmid = $stmt->insert_id;
+    $stmt->close();
+
+    // Insert into detailbarangmasuk and update stock in spesifikasibarang
+    $stmt = $conn->prepare("INSERT INTO detailbarangmasuk (BMID, SpesifikasiID, JumlahMasuk) VALUES (?, ?, ?)");
+    $stmt->bind_param("iii", $bmid, $spesifikasi_id, $jumlah);
+
+    foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
+        $jumlah = $jumlah_masuk[$index];
+        $stmt->execute();
+
+        // Update stock in spesifikasibarang
+        $updateStockStmt = $conn->prepare("UPDATE spesifikasibarang SET JumlahStokBarang = JumlahStokBarang + ? WHERE SpesifikasiID = ?");
+        $updateStockStmt->bind_param("ii", $jumlah, $spesifikasi_id);
+        $updateStockStmt->execute();
+        $updateStockStmt->close();
+    }
+
+    echo "<script>alert('Data berhasil disimpan!');</script>";
+    header("Location: masuk2.php");
+    $stmt->close();
+}
+
+$conn->close();
 ?>
 
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
-<meta name="author" content="AdminKit">
-<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
-<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
-<title>Barang Masuk dan Detail Barang Masuk</title>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 
-<link href="css/app.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+	<link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
+
+	<title>Barang Masuk</title>
+
+	<link href="css/app.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+<?php include "header.php"; ?>
+<style>
+    body { font-family: Arial, sans-serif; }
+    #table-container { width: 80%; margin: 20px auto; text-align: center; }
+    table { width: 100%; border-collapse: collapse; }
+    table, th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f4f4f4; }
+    button { padding: 8px 12px; margin-top: 10px; cursor: pointer; }
+</style>
 </head>
 <body>
-<?php include "header.php"; ?>
-
-<div class="container-fluid">
-    <div class="card shadow mb-4">
-        <div class="row">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-                <div class="jumbotron jumbotron-fluid">
-                    <div class="container">
-                        <h1 class="display-4">Input Barang Masuk</h1>
-                    </div>
-                </div>
-                <form method="POST">
-                    <div class="form-group row">
-                        <label for="kodeproduk" class="col-sm-2 col-form-label">Kode Barang Masuk</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="kodeproduk" name="inputkode" placeholder="Kode Barang Masuk" maxlength="4" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="namasupp" class="col-sm-2 col-form-label">Nama Supplier</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" id="namasupp" name="inputsupplier" required>
-                                <?php while ($row = mysqli_fetch_array($datasupplier)) { ?>
-                                    <option value="<?php echo $row["NamaSupplier"]; ?>">
-                                        <?php echo $row["SupplierID"] . " - " . $row["NamaSupplier"]; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="tanggal" class="col-sm-2 col-form-label">Tanggal Masuk</label>
-                        <div class="col-sm-10">
-                            <input type="date" class="form-control" name="inputtanggal" id="tanggal" placeholder="Tanggal" required>
-                        </div>
-                    </div>
-
-                    <div class="jumbotron jumbotron-fluid mt-4">
-                        <div class="container">
-                            <h1 class="display-5">Input Detail Barang Masuk</h1>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="kodespek" class="col-sm-2 col-form-label">Kode Detail Masuk</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="kodespek" name="kodedm" placeholder="Kode Detail Masuk" maxlength="4" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="kodespek" class="col-sm-2 col-form-label">Kode Spesifikasi</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" id="kodespek" name="inputspek" required>
-                                <?php while ($row = mysqli_fetch_array($dataspek)) { ?>
-                                    <option value="<?php echo $row["SpesifikasiID"]; ?>">
-                                        <?php echo $row["SpesifikasiID"] . " - " . $row["NamaTipe"] . " - " . $row["NamaWarna"]; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                
-                    <div class="form-group row">
-                        <label for="jumlahbarang" class="col-sm-2 col-form-label">Jumlah Barang</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="jumlahbarang" id="jumlahbarang" placeholder="Jumlah Barang" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-10 button-group">
-                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="Simpan">
-                            <input type="reset" class="btn btn-secondary" value="Batal" name="Batal">
-                        </div>
-                    </div>
-                </form>
+    <div id="table-container">
+        <form method="post" id="barangMasukForm">
+            <div>
+                <label for="supplier_id">Nama Supplier:</label>
+                <select name="supplier_id" id="supplier_id" required>
+                    <?php foreach ($supplierData as $supplier): ?>
+                        <option value="<?php echo $supplier['SupplierID']; ?>">
+                            <?php echo $supplier['NamaSupplier']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-        </div>
+            
+            <div>
+                <label for="tanggal_masuk">Tanggal Masuk:</label>
+                <input type="date" name="tanggal_masuk" id="tanggal_masuk" required>
+            </div>
+            <br>
+            <table id="dynamic-table">
+                <thead>
+                    <tr>
+                        <th>Data Barang & Spesifikasi</th>
+                        <th>Jumlah Masuk</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here -->
+                </tbody>
+            </table>
+            <button type="submit" style="background-color: #222e3c" class="btn btn-primary" onclick="addRow()">Add Row</button>
+            <button  type="submit" style="background-color: #222e3c" class="btn btn-primary" name="save_data">Save Data</button>
+        </form>
     </div>
-</div>
 
-<script src="js/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        const comboBoxOptions = <?php echo json_encode($comboBoxData); ?>;
+
+        function addRow() {
+            const tableBody = document.getElementById("dynamic-table").getElementsByTagName("tbody")[0];
+            const newRow = tableBody.insertRow();
+
+            const comboBoxCell = newRow.insertCell();
+            const comboBoxSelect = document.createElement("select");
+            comboBoxSelect.name = "spesifikasi_id[]";
+            comboBoxSelect.required = true;
+            comboBoxSelect.classList.add("comboBoxClass");
+
+            const defaultOption = document.createElement("option");
+            defaultOption.text = "Pilih Data";
+            defaultOption.value = "";
+            comboBoxSelect.appendChild(defaultOption);
+
+            comboBoxOptions.forEach(option => {
+                const opt = document.createElement("option");
+                opt.value = option.SpesifikasiID;
+                opt.text = option.display;
+                comboBoxSelect.appendChild(opt);
+            });
+            comboBoxCell.appendChild(comboBoxSelect);
+
+            const jumlahCell = newRow.insertCell();
+            const jumlahInput = document.createElement("input");
+            jumlahInput.type = "number";
+            jumlahInput.name = "jumlah_masuk[]";
+            jumlahInput.min = "1";
+            jumlahInput.required = true;
+            jumlahCell.appendChild(jumlahInput);
+
+            const actionCell = newRow.insertCell();
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.type = "button";
+            deleteButton.classList.add("btn", "btn-primary");
+            deleteButton.style.backgroundColor = "#222e3c";
+            deleteButton.onclick = function () {
+            tableBody.removeChild(newRow);
+            };
+            actionCell.appendChild(deleteButton);
+
+            // Inisialisasi Select2 pada ComboBox
+            $(comboBoxSelect).select2({
+                width: 'resolve',
+                placeholder: "Pilih Data"
+            });
+        }
+
+        // Inisialisasi Select2 pada ComboBox yang sudah ada
+        $(document).ready(function() {
+            $('.comboBoxClass').select2({
+                placeholder: "Pilih Data"
+            });
+        });
+    </script>
 </body>
-<?php include "footer.php"; ?>
 </html>

@@ -40,7 +40,7 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
 			<div class="jumbotron jumbotron-fluid"></div>
 
 <div style="text-align: right; margin: 20px;">
-    <a href="adminform2.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+    <a href="adminform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
         Form Tambah
     </a>
 </div>
@@ -116,7 +116,7 @@ else{
 			
 			<!-- untuk icon edit dan delete -->
 			<td>
-				<a href="adminedit2.php?ubahadmin=<?php echo $row["AdminID"]?>" class
+				<a href="adminedit.php?ubahadmin=<?php echo $row["AdminID"]?>" class
 					="btn btn-success btn-sm" title="Edit">
 
 				<i class="bi bi-pencil-square"><img src="icon/pencil-square.svg"></i>

@@ -2,16 +2,6 @@
 include "includes/config.php";
 
 if (isset($_POST['Simpan'])) {
-    if (isset($_REQUEST['inputkode'])) {
-        $adminkode = $_REQUEST['inputkode'];
-    }
-    if (!empty($adminkode)) {
-        $adminkode = $_REQUEST['inputkode'];
-    } else {
-        echo "<h1>Anda harus mengisi data</h1>";
-        die('Anda harus memasukkan datanya');
-    }
-
     $depanadmin = $_POST['inputdepan'];
     $belakangadmin = $_POST['inputbelakang'];
     $hp = $_POST['inputhp'];
@@ -19,7 +9,13 @@ if (isset($_POST['Simpan'])) {
     $password = $_POST['inputpassword'];
     $role = $_POST['inputrole'];
 
-    mysqli_query($connection, "insert into admin values ('$adminkode','$depanadmin','$belakangadmin', '$hp','$email','$password','$role')") ;
+    if (empty($depanadmin) || empty($belakangadmin) || empty($hp) || empty($email) || empty($password)|| empty($role)) {
+        echo '<h1>Anda harus mengisi semua data</h1>';
+        die();
+    }
+
+    // Query untuk memasukkan data ke tabel supplier
+    mysqli_query($connection, "insert into admin (NamaDepan, NamaBelakang, NoHp, Email, Password, Role) values ('$depanadmin','$belakangadmin', '$hp','$email','$password','$role')") ;
 
     header("Location: admin.php");
     exit();
@@ -56,13 +52,6 @@ if (isset($_POST['Simpan'])) {
                     </div>
                 </div>
                 <form method="POST">
-                    <div class="form-group row">
-                        <label for="kodeadmin" class="col-sm-2 col-form-label">Kode Admin</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="kodeadmin" name="inputkode" placeholder="Kode Admin" maxlength="4">
-                        </div>
-                    </div>
-
                     <div class="form-group row">
                         <label for="depanadmin" class="col-sm-2 col-form-label">Nama Depan Admin</label>
                         <div class="col-sm-10">
