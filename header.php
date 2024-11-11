@@ -129,10 +129,10 @@
 							</div>
 
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><?php htmlspecialchars($_SESSION['Email']) . "!";?></span>
+                <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><tes></span>
               </a>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="logout.php">Log out</a>
+								<a class="dropdown-item" href="logout2.php">Log out</a>
 							</div>
 						</li>
 					</ul>

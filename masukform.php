@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     }
 
     echo "<script>alert('Data berhasil disimpan!');</script>";
-    header("Location: masuk2.php");
+    header("Location: masuk.php");
     $stmt->close();
 }
 

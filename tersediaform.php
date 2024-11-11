@@ -28,7 +28,7 @@ if (isset($_POST['Simpan'])) {
         mysqli_query($connection, "INSERT INTO spesifikasibarang (BarangID, BentukID, WarnaID, JumlahStokBarang, HargaBarang) 
                                    VALUES ('$barangid', '$bentukid', '$warnaid', '$jumlahbarang', '$hargabarang')");
 
-        header("Location: tersedia2.php");
+        header("Location: tersedia.php");
         exit();
     }
 }
