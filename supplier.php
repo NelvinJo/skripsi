@@ -1,15 +1,12 @@
 <?php
 session_start();
 
-// Cek apakah sesi Email sudah ada
 if (!isset($_SESSION['Email'])) {
-    // Jika tidak ada sesi, arahkan ke halaman login
     header("Location: login.php");
     exit();
 }
-
-// Jika ada, tampilkan halaman menu utama
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,7 +42,7 @@ if (!isset($_SESSION['Email'])) {
 			<div class="jumbotron jumbotron-fluid"></div>
 
 <div style="text-align: right; margin: 20px;">
-    <a href="supplierform2.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+    <a href="supplierform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
         Form Tambah
     </a>
 </div>
@@ -118,7 +115,7 @@ else{
 			
 			<!-- untuk icon edit dan delete -->
 			<td>
-				<a href="supplieredit2.php?ubahsupplier=<?php echo $row["SupplierID"]?>" class
+				<a href="supplieredit.php?ubahsupplier=<?php echo $row["SupplierID"]?>" class
 					="btn btn-success btn-sm" title="Edit">
 
 				<i class="bi bi-pencil-square"><img src="icon/pencil-square.svg"></i>

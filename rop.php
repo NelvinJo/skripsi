@@ -1,15 +1,12 @@
 <?php
 session_start();
 
-// Cek apakah sesi Email sudah ada
 if (!isset($_SESSION['Email'])) {
-    // Jika tidak ada sesi, arahkan ke halaman login
     header("Location: login.php");
     exit();
 }
-
-// Jika ada, tampilkan halaman menu utama
 ?>
+
 <?php
 // Koneksi ke database
 $host = 'localhost';

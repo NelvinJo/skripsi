@@ -1,4 +1,13 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['Email'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
+<?php
 // Koneksi database
 include "includes/config.php";
 

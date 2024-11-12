@@ -1,8 +1,15 @@
+<?php
+// Assume `$_SESSION['role']` is already set by the login process elsewhere in the application.
+$user_role = $_SESSION['Role'] ?? ''; // Fetch user role from session if it exists
+?>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="description" content="Responsive Admin & Dashboard Template based on Bootstrap 5">
 	<meta name="author" content="AdminKit">
 	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
@@ -22,79 +29,66 @@
 		<nav id="sidebar" class="sidebar js-sidebar">
 			<div class="sidebar-content js-simplebar">
 				<a class="sidebar-brand" href="header.php">
-          <span class="align-middle">Toko Arloji Pasar Baru</span>
-        </a>
+          			<span class="align-middle">Toko Arloji Pasar Baru</span>
+        		</a>
 
 				<ul class="sidebar-nav">
-					<li class="sidebar-header">
-						Menu
-					</li>
-
+					<li class="sidebar-header">Menu</li>
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="menuutama.php">
-              <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Menu Utama</span>
-            </a>
+							<i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Menu Utama</span>
+						</a>
 					</li>
 
-					<li class="sidebar-header">
-						Menu Input
-					</li>
-
+					<li class="sidebar-header">Menu Input</li>
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="tersedia.php">
-              <i class="align-middle" data-feather="box"></i> <span class="align-middle">Barang Tersedia</span>
-            </a>
+							<i class="align-middle" data-feather="box"></i> <span class="align-middle">Barang Tersedia</span>
+						</a>
 					</li>
-
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="masuk.php">
-              <i class="align-middle" data-feather="shopping-bag"></i> <span class="align-middle">Barang Masuk</span>
-            </a>
+							<i class="align-middle" data-feather="shopping-bag"></i> <span class="align-middle">Barang Masuk</span>
+						</a>
 					</li>
-
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="keluar.php">
-              <i class="align-middle" data-feather="package"></i> <span class="align-middle">Barang Keluar</span>
-            </a>
+							<i class="align-middle" data-feather="package"></i> <span class="align-middle">Barang Keluar</span>
+						</a>
 					</li>
-
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="supplier.php">
-              <i class="align-middle" data-feather="truck"></i> <span class="align-middle">Supplier</span>
-            </a>
+							<i class="align-middle" data-feather="truck"></i> <span class="align-middle">Supplier</span>
+						</a>
 					</li>
 
+					<?php if ($user_role === 'owner'): ?>
+					<!-- Show this only if the user role is 'owner' -->
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="admin.php">
-              <i class="align-middle" data-feather="users"></i> <span class="align-middle">Admin</span>
-            </a>
+							<i class="align-middle" data-feather="users"></i> <span class="align-middle">Admin</span>
+						</a>
 					</li>
+					<?php endif; ?>
 
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="kategori.php">
-              <i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
-            </a>
+							<i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
+						</a>
 					</li>
 
-					<li class="sidebar-header">
-						Menu Perhitungan
-					</li>
-
+					<li class="sidebar-header">Menu Perhitungan</li>
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="opname2.php">
-              <i class="align-middle" data-feather="bar-chart"></i> <span class="align-middle">Stock Opname</span>
-            </a>
+							<i class="align-middle" data-feather="bar-chart"></i> <span class="align-middle">Stock Opname</span>
+						</a>
 					</li>
-
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="rop.php">
-              <i class="align-middle" data-feather="activity"></i> <span class="align-middle">ROP</span>
-            </a>
+							<i class="align-middle" data-feather="activity"></i> <span class="align-middle">ROP</span>
+						</a>
 					</li>
 				</ul>
-
-				<div class="sidebar-cta">
-					
 			</div>
 		</nav>
 
@@ -129,7 +123,7 @@
 							</div>
 
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><tes></span>
+                <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><?php echo $_SESSION['NamaDepan'] . ' ' . $_SESSION['NamaBelakang']; ?></span>
               </a>
 							<div class="dropdown-menu dropdown-menu-end">
 								<a class="dropdown-item" href="logout2.php">Log out</a>

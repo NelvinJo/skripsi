@@ -18,6 +18,8 @@ if (isset($_POST["submitlogin"])) {
         $row_admin = mysqli_fetch_array($sql_login);
 
         // Set session variables based on email and role
+        $_SESSION['NamaDepan'] = $row_admin['NamaDepan'];
+        $_SESSION['NamaBelakang'] = $row_admin['NamaBelakang'];
         $_SESSION['Email'] = $emailuser;
         $_SESSION['Role'] = $row_admin['Role'];
 
