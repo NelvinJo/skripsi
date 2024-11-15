@@ -1,10 +1,8 @@
 <?php
-	session_start();
-	$_SESSION['emailuser'];
-	unset($_SESSION['emailuser']);
+session_start();
+session_unset();
+session_destroy();
 
-	session_unset();
-	session_destroy();
-	header("location:login.php");
-
+header("Location: login.php");
+exit;
 ?>

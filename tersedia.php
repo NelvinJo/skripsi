@@ -11,144 +11,262 @@ if (!isset($_SESSION['Email'])) {
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
-	<meta name="author" content="AdminKit">
-	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Responsive Admin & Dashboard Template based on Bootstrap 5">
+    <meta name="author" content="AdminKit">
+    <meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
 
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
 
-	<link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
+    <title>Barang Tersedia</title>
 
-	<title>Barang Tersedia</title>
+    <link href="css/app.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-	<link href="css/app.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px solid #dee2e6;
+            background-color: #fff;
+            color: #007bff;
+            border-radius: 3px;
+        }
+
+        .pagination button.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination button.disabled {
+            cursor: default;
+            color: #ccc;
+            border-color: #ccc;
+        }
+
+        #entriesSelect {
+            margin-bottom: 10px;
+        }
+
+        .entries-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .entries-container label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<?php include "header.php";?>
-<div class="container-fluid">
-<div class="card shadow mb-4">
-<?php
-  include "includes/config.php" ;
-?>
 
 <body>
-	<div class="row">
-		<div class="col-sm-1"></div>
-		<div class="col-sm-10">
-			<div class="jumbotron jumbotron-fluid"></div>
+<?php include "header.php"; ?>
+<?php include "includes/config.php"; ?>
 
-            <div style="text-align: right; margin: 20px;">
-                <a href="tersediaform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
-                    Form Tambah
-                </a>
-            </div>
+<main class="content">
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <div class="jumbotron jumbotron-fluid"></div>
 
-            <form method="POST">
-                <div class="form-group row mb-2">
-                    <label for="searchBarang" class="col-sm-3">Nama Barang Tersedia</label>
-                    <div class="col-sm-6">
-                        <input type="text" name="searchBarang" class="form-control" id="searchBarang" value="<?php if(isset($_POST['searchBarang'])) {echo $_POST['searchBarang'];} ?>" placeholder="Cari Nama Barang Tersedia">
+                <div style="text-align: right; margin: 20px;">
+                    <a href="tersediaform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+                        Form Tambah
+                    </a>
+                </div>
+
+                <form method="POST">
+                    <div class="form-group row mb-2">
+                        <label for="searchBarang" class="col-sm-3">Nama Barang Tersedia</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="searchBarang" class="form-control" id="searchBarang" value="<?php if (isset($_POST['searchBarang'])) { echo htmlspecialchars($_POST['searchBarang']); } ?>" placeholder="Cari Nama Barang Tersedia">
+                        </div>
+                        <div class="col-sm-1">
+                            <input type="submit" style="background-color: #222e3c" name="kirimBarang" class="btn btn-primary" value="Search">
+                        </div>
                     </div>
-                    <input type="submit" style="background-color: #222e3c" name="kirimBarang" class="col-sm-1 btn btn-primary" value="Search">
-                </div>
-            </form>
+                </form>
 
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tabel Barang Tersedia</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Sub Kategori</th>
-                                    <th>Nama Barang Tersedia</th>
-                                    <th>Satuan Barang Tersedia</th>
-                                    <th>Nama Tipe</th>
-                                    <th>Nama Warna</th>
-                                    <th>Jumlah Stok Barang Tersedia</th>
-                                    <th>Harga Barang Tersedia</th>
-                                    <th colspan="2" style="text-align: center;">Action</th>
-                                </tr>
-                            </thead>	
-                            <tbody>		
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h1 class="h3 mb-3">Tabel Barang Tersedia</h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="entries-container">
+                            <label for="entriesSelect">Show entries:</label>
+                            <select id="entriesSelect">
+                                <option value="10" selected>10</option>
+                                <option value="30">30</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
 
-                            <?php
-                            if(isset($_POST["kirimBarang"])) {
-                                $search = $_POST['searchBarang'];
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="barangTersediaTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Sub Kategori</th>
+                                        <th>Nama Barang Tersedia</th>
+                                        <th>Satuan Barang Tersedia</th>
+                                        <th>Nama Tipe</th>
+                                        <th>Nama Warna</th>
+                                        <th>Jumlah Stok Barang Tersedia</th>
+                                        <th>Harga Barang Tersedia</th>
+                                        <th colspan="2" style="text-align: center;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                $search = '';
+                                if (isset($_POST["kirimBarang"])) {
+                                    $search = mysqli_real_escape_string($connection, $_POST['searchBarang']);
+                                }
+
                                 $query = mysqli_query($connection, "SELECT spesifikasibarang.SpesifikasiID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
-                                                                            bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
-                                                                            spesifikasibarang.HargaBarang
-                                                                    FROM spesifikasibarang
-                                                                    JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
-                                                                    JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
-                                                                    JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
-                                                                    JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
-                                                                    WHERE subkategori.NamaSubKategori LIKE '%$search%' 
-                                                                    OR barangtersedia.NamaBarang LIKE '%$search%' 
-                                                                    OR barangtersedia.SatuanBarang LIKE '%$search%' 
-                                                                    OR bentuk.NamaBentuk LIKE '%$search%' 
-                                                                    OR warna.NamaWarna LIKE '%$search%' 
-                                                                    OR spesifikasibarang.JumlahStokBarang LIKE '%$search%'
-                                                                    OR spesifikasibarang.HargaBarang LIKE '%$search%' ");
-                            } else {
-                                $query = mysqli_query($connection, "SELECT spesifikasibarang.SpesifikasiID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
-                                                                            bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
-                                                                            spesifikasibarang.HargaBarang
-                                                                    FROM spesifikasibarang
-                                                                    JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
-                                                                    JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
-                                                                    JOIN bentuk ON spesifikasibarang.bentukID = bentuk.bentukID
-                                                                    JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID");
-                            }
+                                                                     bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
+                                                                     spesifikasibarang.HargaBarang
+                                                             FROM spesifikasibarang
+                                                             JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
+                                                             JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
+                                                             JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
+                                                             JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
+                                                             WHERE subkategori.NamaSubKategori LIKE '%$search%' 
+                                                             OR barangtersedia.NamaBarang LIKE '%$search%' 
+                                                             OR barangtersedia.SatuanBarang LIKE '%$search%' 
+                                                             OR bentuk.NamaBentuk LIKE '%$search%' 
+                                                             OR warna.NamaWarna LIKE '%$search%' 
+                                                             OR spesifikasibarang.JumlahStokBarang LIKE '%$search%'
+                                                             OR spesifikasibarang.HargaBarang LIKE '%$search%'");
 
-                            $nomor = 1;
-                            while($row = mysqli_fetch_array($query)) { ?>
-                                <tr>
-                                    <td><?php echo $nomor; ?></td>
-                                    <td><?php echo $row['NamaSubKategori']; ?></td>
-                                    <td><?php echo $row['NamaBarang']; ?></td>
-                                    <td><?php echo $row['SatuanBarang']; ?></td>
-                                    <td><?php echo $row['NamaBentuk']; ?></td>
-                                    <td><?php echo $row['NamaWarna']; ?></td>
-                                    <td><?php echo $row['JumlahStokBarang']; ?></td>
-                                    <td><?php echo $row['HargaBarang']; ?></td>
-                                    <td>
-                                    <a href="tersediaedit.php?ubahspesifikasi=<?php echo $row["SpesifikasiID"]?> &" class="btn btn-success btn-sm" title="Edit">
-                                        <i class="bi bi-pencil-square"><img src="icon/pencil-square.svg"></i>
-                                    </a>
-
-
-                                    </td>
-                                    <td>
-                                    <a href="tersediahapus.php?hapusspesifikasi=<?php echo $row["SpesifikasiID"]?>" class="btn btn-danger btn-sm" title="Delete">
-                                        <i class="bi bi-trash-fill.svg"><img src="icon/trash-fill.svg"></i>
+                                $nomor = 1;
+                                while ($row = mysqli_fetch_array($query)) { ?>
+                                    <tr>
+                                        <td><?php echo $nomor; ?></td>
+                                        <td><?php echo htmlspecialchars($row['NamaSubKategori']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['NamaBarang']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['SatuanBarang']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['NamaBentuk']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['NamaWarna']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['JumlahStokBarang']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['HargaBarang']); ?></td>
+                                        <td>
+                                            <a href="tersediaedit.php?ubahspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-success btn-sm" title="Edit">
+                                                <img src="icon/pencil-square.svg" alt="Edit" width="16" height="16">
                                             </a>
-                                        
-			</td>
+                                        </td>
+                                        <td>
+                                            <a href="tersediahapus.php?hapusspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                                <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php $nomor++;
+                                } ?>
+                                </tbody>
+                            </table>
+                        </div>
 
-		</tr>
+                        <div class="pagination" id="paginationControls"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+        <?php include "footer.php"; ?>
+        <script src="js/app.js"></script>
+    </div>
+</main>
 
-<?php $nomor = $nomor+1 ; ?>		
-<?php	} ?>
-			
-</tbody>	  
-</table>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('barangTersediaTable');
+        const entriesSelect = document.getElementById('entriesSelect');
+        const paginationControls = document.getElementById('paginationControls');
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        let currentPage = 1;
+        let rowsPerPage = parseInt(entriesSelect.value);
 
-		</div>
-	</div>
+        function displayTable() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
 
-			
-		</div>
-	</div>
-	<?php include "footer.php"; ?>
-	<script src="js/app.js"></script>
-	
+            rows.forEach((row, index) => {
+                row.style.display = (index >= start && index < end) ? '' : 'none';
+            });
+
+            renderPaginationControls();
+        }
+
+        function renderPaginationControls() {
+            const pageCount = Math.ceil(rows.length / rowsPerPage);
+            paginationControls.innerHTML = '';
+
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Prev';
+            prevButton.disabled = currentPage === 1;
+            prevButton.classList.toggle('disabled', currentPage === 1);
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayTable();
+                }
+            });
+            paginationControls.appendChild(prevButton);
+
+            for (let i = 1; i <= pageCount; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                if (i === currentPage) {
+                    button.classList.add('active');
+                }
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    displayTable();
+                });
+                paginationControls.appendChild(button);
+            }
+
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === pageCount;
+            nextButton.classList.toggle('disabled', currentPage === pageCount);
+            nextButton.addEventListener('click', () => {
+                if (currentPage < pageCount) {
+                    currentPage++;
+                    displayTable();
+                }
+            });
+            paginationControls.appendChild(nextButton);
+        }
+
+        function updateTable() {
+            rowsPerPage = parseInt(entriesSelect.value);
+            currentPage = 1;
+            displayTable();
+        }
+
+        entriesSelect.addEventListener('change', updateTable);
+
+        displayTable();
+    });
+</script>
+
 </body>
 </html>

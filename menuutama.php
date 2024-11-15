@@ -36,6 +36,20 @@ if (!isset($_SESSION['Email'])) {
 
 					<h1 class="h3 mb-3">Menu Utama</h1>
 
+					<div class="col-12 col-lg-6">
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title">Doughnut Chart</h5>
+									<h6 class="card-subtitle text-muted">Doughnut charts are excellent at showing the relational proportions between data.</h6>
+								</div>
+								<div class="card-body">
+									<div class="chart chart-sm">
+										<canvas id="chartjs-doughnut"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+
 					<div class="row">
 						<div class="col-12">
 							<div class="card-body">								
@@ -48,9 +62,34 @@ if (!isset($_SESSION['Email'])) {
     
 <?php include "footer.php";?>
 <script src="js/app.js"></script>
+<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			// Doughnut chart
+			new Chart(document.getElementById("chartjs-doughnut"), {
+				type: "doughnut",
+				data: {
+					labels: ["Social", "Search Engines", "Direct", "Other"],
+					datasets: [{
+						data: [260, 125, 54, 146],
+						backgroundColor: [
+							window.theme.primary,
+							window.theme.success,
+							window.theme.warning,
+							"#dee2e6"
+						],
+						borderColor: "transparent"
+					}]
+				},
+				options: {
+					maintainAspectRatio: false,
+					cutoutPercentage: 65,
+					legend: {
+						display: false
+					}
+				}
+			});
+		});
+	</script>
 </body>
-<?php
-mysqli_close($connection);
-ob_end_flush();
-?>
+
 </html>

@@ -8,7 +8,6 @@ if (!isset($_SESSION['Email'])) {
 ?>
 
 <?php
-// Koneksi database
 include "includes/config.php";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -16,7 +15,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch data for ComboBox: combining SubKategori, Barang, Bentuk, and Warna, including JumlahStokBarang
 $comboBoxData = [];
 $comboBoxQuery = "SELECT
     SubKategori.NamaSubKategori,
@@ -49,7 +47,6 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Handle form submission to save stock opname data
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     $spesifikasi_ids = $_POST['spesifikasi_id'];
     $stok_fisik = $_POST['stok_fisik'];
@@ -64,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $opnameid = $stmt->insert_id;
         $stmt->close();
 
-        // Fetch current stock for each spesifikasi_id
         $stmt = $conn->prepare("SELECT JumlahStokBarang FROM SpesifikasiBarang WHERE SpesifikasiID = ?");
         $stmt->bind_param("i", $spesifikasi_id);
         $stmt->execute();
@@ -72,10 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $stmt->fetch();
         $stmt->close();
 
-        // Calculate difference
         $perbedaan = $jumlahStokBarang - $stok_fisik_input;
 
-        // Optionally: Save the discrepancy to a stock_opname table (or log it)
         $stmt = $conn->prepare("INSERT INTO detailstockopname (OpnameID, SpesifikasiID, StokFisik, Perbedaan) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("iiii", $opnameid,$spesifikasi_id, $stok_fisik_input, $perbedaan);
         $stmt->execute();
@@ -136,7 +130,7 @@ $conn->close();
                 </tr>
             </thead>
             <tbody>
-                <!-- Rows will be added here -->
+
             </tbody>
         </table>
         <button type="submit" style="background-color: #222e3c" class="btn btn-primary" onclick="addRow()">Add Row</button>

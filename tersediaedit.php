@@ -21,17 +21,14 @@ if (isset($_POST['Simpan'])) {
     $jumlahbarang = $_POST['jumlahbarang'];
     $hargabarang = $_POST['hargabarang'];
 
-    // Update barangtersedia untuk NamaBarang, SubKategori, dan SatuanBarang
     mysqli_query($connection, "UPDATE barangtersedia SET NamaBarang='$namabarang', SubID='$subkategori', SatuanBarang='$satuanbarang' WHERE BarangID='$barangID'");
 
-    // Update spesifikasibarang untuk atribut terkait lainnya
     mysqli_query($connection, "UPDATE spesifikasibarang SET BarangID='$barangID', BentukID='$kodetipe', WarnaID='$kodewarna', JumlahStokBarang='$jumlahbarang', HargaBarang='$hargabarang' WHERE SpesifikasiID='$spekkode'");
 
-    header("Location: tersedia2.php");
+    header("Location: tersedia.php");
     exit();
 }
 
-// Fetch data from related tables
 $datasubkategori = mysqli_query($connection, "SELECT * FROM subkategori");
 $databentuk = mysqli_query($connection, "SELECT * FROM bentuk");
 $datawarna = mysqli_query($connection, "SELECT * FROM warna");
@@ -48,13 +45,14 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Spesifikasi Barang</title>
     <link href="css/app.css" rel="stylesheet">
 </head>
 
 <body>
 <?php include "header.php"; ?>
 
+<main class="content">
+<div class="container-fluid p-0">
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="row">
@@ -64,6 +62,10 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                     <input type="hidden" name="kodespek" value="<?php echo $rowspek['SpesifikasiID']; ?>">
                     <input type="hidden" name="barangid" value="<?php echo $rowBarangTersedia['BarangID']; ?>">
 
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                    <h1 class="h3 mb-3">Edit Barang Tersedia</h1>
+                </div>
                     <div class="form-group row">
                         <label for="subkategori" class="col-sm-2 col-form-label">Sub Kategori</label>
                         <div class="col-sm-10">
@@ -76,7 +78,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Input for Nama Barang -->
                     <div class="form-group row">
                         <label for="namabarang" class="col-sm-2 col-form-label">Nama Barang</label>
                         <div class="col-sm-10">
@@ -84,7 +85,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Input for Satuan Barang -->
                     <div class="form-group row">
                         <label for="satuanbarang" class="col-sm-2 col-form-label">Satuan Barang</label>
                         <div class="col-sm-10">
@@ -92,7 +92,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Dropdown for Kode Tipe -->
                     <div class="form-group row">
                         <label for="kodetipe" class="col-sm-2 col-form-label">Kode Tipe</label>
                         <div class="col-sm-10">
@@ -105,7 +104,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Dropdown for Kode Warna -->
                     <div class="form-group row">
                         <label for="kodewarna" class="col-sm-2 col-form-label">Kode Warna</label>
                         <div class="col-sm-10">
@@ -118,7 +116,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Input for Jumlah Stok -->
                     <div class="form-group row">
                         <label for="jumlahbarang" class="col-sm-2 col-form-label">Jumlah Stok</label>
                         <div class="col-sm-10">
@@ -126,7 +123,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Input for Harga Barang -->
                     <div class="form-group row">
                         <label for="hargabarang" class="col-sm-2 col-form-label">Harga Barang</label>
                         <div class="col-sm-10">
@@ -134,7 +130,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                         </div>
                     </div>
 
-                    <!-- Submit and Reset buttons -->
                     <div class="form-group row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10 button-group">
@@ -150,5 +145,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
 
 <?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+</main>
 </body>
 </html>

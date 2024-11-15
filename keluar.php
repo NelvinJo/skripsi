@@ -26,20 +26,18 @@ if (!isset($_SESSION['Email'])) {
 	<link href="css/app.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-<?php include "header.php";?>
-<div class="container-fluid">
-<div class="card shadow mb-4">
-<?php
-  include "includes/config.php";
-?>
 
 <body>
+<?php include "header.php"; ?>
+<?php include "includes/config.php"; ?>
+
+    <main class="content">
+    <div class="container-fluid p-0">
 	<div class="row">
 		<div class="col-sm-1"></div>
 		<div class="col-sm-10">
 			<div class="jumbotron jumbotron-fluid"></div>
 
-            <!-- Form Pencarian Kategori -->
             <div style="text-align: right; margin: 20px;">
                 <a href="keluarform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
                     Form Tambah
@@ -56,10 +54,9 @@ if (!isset($_SESSION['Email'])) {
                 </div>
             </form>
 
-            <!-- Tabel Kategori dan Sub Kategori -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tabel Barang Keluar</h6>
+                <h1 class="h3 mb-3">Tabel Barang Keluar</h1>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -138,6 +135,7 @@ if (!isset($_SESSION['Email'])) {
 	</div>
 	<?php include "footer.php"; ?>
 	<script src="js/app.js"></script>
+    </main>
 	
 </body>
 </html>

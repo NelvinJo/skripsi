@@ -25,10 +25,8 @@ if (isset($_POST['EditSub'])) {
     }
 }
 
-// Mengambil data kategori untuk dropdown
 $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 
-// Mengambil data subkategori yang akan diedit
 $kodesub = $_GET["ubahsub"];
 $editsub = mysqli_query($connection, "SELECT * FROM subkategori WHERE SubID = '$kodesub'");
 $rowsub = mysqli_fetch_array($editsub);
@@ -48,17 +46,21 @@ $rowsub = mysqli_fetch_array($editsub);
 <body>
 <?php include "header.php"; ?>
 
+<main class="content">
+<div class="container-fluid p-0">
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
-                <h2>Edit Sub Kategori</h2>
+            <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                    <h1 class="h3 mb-3">Edit Kategori</h1>
+                </div>
 
                 <form method="POST">
                     <input type="hidden" name="subid" value="<?php echo $rowsub['SubID']; ?>">
 
-                    <!-- Dropdown untuk Nama Kategori -->
                     <div class="form-group row">
                         <label for="kategoridropdown" class="col-sm-2 col-form-label">Nama Kategori</label>
                         <div class="col-sm-10">
@@ -73,7 +75,6 @@ $rowsub = mysqli_fetch_array($editsub);
                         </div>
                     </div>
 
-                    <!-- Input Nama Sub Kategori -->
                     <div class="form-group row">
                         <label for="inputsub" class="col-sm-2 col-form-label">Nama Sub Kategori</label>
                         <div class="col-sm-10">
@@ -81,7 +82,6 @@ $rowsub = mysqli_fetch_array($editsub);
                         </div>
                     </div>
 
-                    <!-- Tombol Simpan dan Reset -->
                     <div class="form-group row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
@@ -95,6 +95,8 @@ $rowsub = mysqli_fetch_array($editsub);
     </div>
 </div>
 
+<?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+</main>
 </body>
 </html>

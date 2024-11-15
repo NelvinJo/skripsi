@@ -10,10 +10,8 @@ if (!isset($_SESSION['Email'])) {
 <?php
 include "includes/config.php";
 
-// Ambil parameter tanggal dari URL
 $tanggalOpname = $_GET['tanggal'] ?? '';
 
-// Query untuk mengambil detail berdasarkan TanggalOpname
 $query = mysqli_query($connection, "SELECT detailstockopname.DetailOpnameID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
                                                                             bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
                                                                             detailstockopname.StokFisik, detailstockopname.Perbedaan, stockopname.TanggalOpname

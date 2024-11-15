@@ -10,12 +10,10 @@ if (!isset($_SESSION['Email'])) {
 <?php
 include "includes/config.php";
 
-// Proses simpan kategori
 if (isset($_POST['SimpanKategori'])) {
     if (!empty($_POST['inputkategori'])) {
         $namakategori = $_POST['inputkategori'];
         
-        // Memeriksa apakah kategori sudah ada berdasarkan nama
         $checkKategori = mysqli_query($connection, "SELECT * FROM kategori WHERE NamaKategori = '$namakategori'");
         
         if (mysqli_num_rows($checkKategori) == 0) {
@@ -27,7 +25,6 @@ if (isset($_POST['SimpanKategori'])) {
     }
 }
 
-// Proses simpan sub kategori
 if (isset($_POST['SimpanSubKategori'])) {
     if (!empty($_POST['kategoridropdown']) && !empty($_POST['inputsub'])) {
         $kodekategori = $_POST['kategoridropdown'];
@@ -43,7 +40,6 @@ if (isset($_POST['SimpanSubKategori'])) {
     exit();
 }
 
-// Mengambil data kategori untuk dropdown
 $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 ?>
 
@@ -66,17 +62,21 @@ $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 <body>
 <?php include "header.php"; ?>
 
+<main class="content">
+<div class="container-fluid p-0">
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
-                <div class="jumbotron jumbotron-fluid">
+                <div class="jumbotron jumbotron-fluid"></div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                    <h1 class="h3 mb-3">Form Kategori</h1>
                 </div>
 
-                <!-- Form untuk Input Kategori -->
                 <form method="POST">
-                    <h2>Input Kategori Baru</h2>
                     <div class="form-group row">
                         <label for="inputkategori" class="col-sm-2 col-form-label">Nama Kategori</label>
                         <div class="col-sm-10">
@@ -94,9 +94,7 @@ $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 
                 <hr>
 
-                <!-- Form untuk Input Sub Kategori -->
                 <form method="POST">
-                    <h2>Input Sub Kategori</h2>
                     <div class="form-group row">
                         <label for="kategoridropdown" class="col-sm-2 col-form-label">Nama Kategori</label>
                         <div class="col-sm-10">
@@ -129,4 +127,5 @@ $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 </body>
 <?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+</main>
 </html>

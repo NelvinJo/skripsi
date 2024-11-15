@@ -40,7 +40,6 @@ if (!isset($_SESSION['Email'])) {
 		<div class="col-sm-10">
 			<div class="jumbotron jumbotron-fluid"></div>
 
-            <!-- Form Pencarian Kategori -->
             <div style="text-align: right; margin: 20px;">
                 <a href="kategoriform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
                     Form Tambah
@@ -57,7 +56,6 @@ if (!isset($_SESSION['Email'])) {
                 </div>
             </form>
 
-            <!-- Tabel Kategori dan Sub Kategori -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Tabel Kategori</h6>
@@ -113,6 +111,7 @@ if (!isset($_SESSION['Email'])) {
                         </table>
                     </div>
                 </div>
+                
             </div>
 	</div>
 	<?php include "footer.php"; ?>

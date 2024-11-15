@@ -7,23 +7,19 @@ ob_start();
 session_start();
 
 if (isset($_POST["submitlogin"])) {
-    // Sanitize email and hash the password
     $emailuser = mysqli_real_escape_string($connection, $_POST["useremail"]);
     $passuser = md5($_POST["pass"]);
 
-    // Query to check if email and password match
     $sql_login = mysqli_query($connection, "SELECT * FROM admin WHERE Email = '$emailuser' AND Password = '$passuser'");
 
     if (mysqli_num_rows($sql_login) > 0) {
         $row_admin = mysqli_fetch_array($sql_login);
 
-        // Set session variables based on email and role
         $_SESSION['NamaDepan'] = $row_admin['NamaDepan'];
         $_SESSION['NamaBelakang'] = $row_admin['NamaBelakang'];
         $_SESSION['Email'] = $emailuser;
         $_SESSION['Role'] = $row_admin['Role'];
 
-        // Redirect to the main menu (menuutama.php) or dashboard
         header("Location: menuutama.php");
         exit();
     } else {
@@ -51,7 +47,6 @@ if (isset($_POST["submitlogin"])) {
                         <div class="card-body">
                             <div class="m-sm-3">
                                 <?php
-                                // Display error message if login failed
                                 if (isset($error_message)) {
                                     echo "<p style='color:red;'>$error_message</p>";
                                 }

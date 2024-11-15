@@ -8,7 +8,6 @@ if (!isset($_SESSION['Email'])) {
 ?>
 
 <?php
-// Koneksi database
 include "includes/config.php";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -16,7 +15,6 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch data for ComboBox: combining SubKategori, Barang, Bentuk, and Warna
 $comboBoxData = [];
 $comboBoxQuery = "SELECT
     SubKategori.NamaSubKategori,
@@ -48,21 +46,18 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Handle form submission to save data
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     $pelanggan = $_POST['pelanggan'];
     $tanggal_keluar = $_POST['tanggal_keluar'];
     $spesifikasi_ids = $_POST['spesifikasi_id'];
     $jumlah_keluar = $_POST['jumlah_keluar'];
 
-    // Insert into barangkeluar table to get BKID
     $stmt = $conn->prepare("INSERT INTO barangkeluar (NamaPelanggan, TanggalKeluar) VALUES (?, ?)");
     $stmt->bind_param("ss", $pelanggan, $tanggal_keluar);
     $stmt->execute();
     $bkid = $stmt->insert_id;
     $stmt->close();
 
-    // Insert into detailbarangkeluar and update stock in spesifikasibarang
     $stmt = $conn->prepare("INSERT INTO detailbarangkeluar (BKID, SpesifikasiID, JumlahKeluar) VALUES (?, ?, ?)");
     $stmt->bind_param("iii", $bkid, $spesifikasi_id, $jumlah);
 
@@ -70,7 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $jumlah = $jumlah_keluar[$index];
         $stmt->execute();
 
-        // Update stock in spesifikasibarang by subtracting the quantity
         $updateStockStmt = $conn->prepare("UPDATE spesifikasibarang SET JumlahStokBarang = JumlahStokBarang - ? WHERE SpesifikasiID = ?");
         $updateStockStmt->bind_param("ii", $jumlah, $spesifikasi_id);
         $updateStockStmt->execute();
@@ -118,6 +112,7 @@ $conn->close();
 </head>
 <body>
             <div id="table-container">
+            <h1 class="h3 mb-3">Form Barang Keluar</h1>
                 <form method="post" id="barangKeluarForm">
             <div class="form-group row">
                 <label for="pelanggan" class="col-sm-2 col-form-label">Nama Pelanggan</label>
@@ -140,7 +135,7 @@ $conn->close();
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Rows will be added here -->
+
                 </tbody>
             </table>
             <button type="submit" style="background-color: #222e3c" class="btn btn-primary" onclick="addRow()">Add Row</button>
@@ -195,21 +190,18 @@ $conn->close();
             };
             actionCell.appendChild(deleteButton);
 
-
-            // Inisialisasi Select2 pada ComboBox
             $(comboBoxSelect).select2({
                 width: 'resolve',
                 placeholder: "Pilih Data"
             });
         }
 
-        // Inisialisasi Select2 pada ComboBox yang sudah ada
         $(document).ready(function() {
             $('.comboBoxClass').select2({
                 placeholder: "Pilih Data"
             });
         });
     </script>
-
+	<script src="js/app.js"></script>
 </body>
 </html>

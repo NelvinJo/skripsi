@@ -19,7 +19,6 @@ if (isset($_POST['Simpan'])) {
     $jumlahbarang = $_POST['jumlahbarang'];
     $hargabarang = $_POST['hargabarang'];
 
-    // Cek existing data
     $existingQuery = mysqli_query($connection, "SELECT * FROM barangtersedia 
                                                 JOIN spesifikasibarang 
                                                 ON barangtersedia.BarangID = spesifikasibarang.BarangID 
@@ -29,7 +28,6 @@ if (isset($_POST['Simpan'])) {
                                                 AND spesifikasibarang.WarnaID = '$warnaid'");
 
     if (mysqli_num_rows($existingQuery) == 0) {
-        // Jika tidak ada existing data yang sama, simpan ke database
         mysqli_query($connection, "INSERT INTO barangtersedia (SubID, NamaBarang, SatuanBarang) 
                                    VALUES ('$subkategori', '$namabarang', '$satuanbarang')");
         $barangid = mysqli_insert_id($connection);
@@ -106,16 +104,21 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
 
 <body>
 <?php include "header.php"; ?>
+
+<main class="content">
+<div class="container-fluid p-0">
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
-                <div class="jumbotron jumbotron-fluid">
-                    <div class="container">
-                        <h1 class="display-4">Input Barang Tersedia dan Spesifikasi</h1>
-                    </div>
+                <div class="jumbotron jumbotron-fluid"></div>
+                
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                    <h1 class="h3 mb-3">Form Barang Tersedia</h1>
                 </div>
+                
                 <form method="POST">
                     <div class="form-group row">
                         <label for="subkategori" class="col-sm-2 col-form-label">Sub Kategori</label>
@@ -234,13 +237,14 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
                         </form>
                 </div>
                 </div>
-                    <?php include "footer.php"; ?>
-                    <script src="js/app.js"></script>
+                    
                 </div>
             </div>
             <div class="col-sm-1"></div>
         </div>
-       
+        <?php include "footer.php"; ?>
+                    <script src="js/app.js"></script>
+                    </main>
     </div>
 
 

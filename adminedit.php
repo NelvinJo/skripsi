@@ -1,44 +1,46 @@
 <?php
 session_start();
 if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
-    header("Location: menuutama.php"); // Redirect staff to main menu
+    header("Location: menuutama.php");
     exit();
 }
-?>
 
-<!DOCTYPE html>
-
-<?php
 include "includes/config.php";
 
 if (isset($_POST['Edit'])) {
-    // Ambil ID dari URL
     $adminkode = $_GET['ubahadmin'];
 
-    // Ambil data dari form
     $depanadmin = $_POST['inputdepan'];
     $belakangadmin = $_POST['inputbelakang'];
     $hp = $_POST['inputhp'];
     $email = $_POST['inputemail'];
     $password = $_POST['inputpassword'];
     $role = $_POST['inputrole'];
-    // Validasi input
-    if (empty($depanadmin) || empty($belakangadmin) || empty($hp) || empty($email) || empty($password)|| empty($role)) {
+
+    if (empty($depanadmin) || empty($belakangadmin) || empty($hp) || empty($email) || empty($role)) {
         echo '<h1>Anda harus mengisi semua data</h1>';
         die();
     }
 
-    // Query untuk mengupdate data supplier
-    mysqli_query($connection, "update admin set NamaDepan='$depanadmin', NamaBelakang='$belakangadmin', NoHP='$hp', Email='$email', Password='$password', Role='$role' WHERE AdminID = '$adminkode'");
+    if (!empty($password)) {
+        $hashed_password = md5($password);
+        $password_query = ", Password='$hashed_password'";
+    } else {
+        $password_query = "";
+    }
 
-    header("Location:admin.php");
+    $query = "UPDATE admin SET NamaDepan='$depanadmin', NamaBelakang='$belakangadmin', NoHP='$hp', Email='$email', Role='$role' $password_query WHERE AdminID = '$adminkode'";
+    mysqli_query($connection, $query);
+
+    header("Location: admin.php");
 }
 
-// Ambil kode supplier dari URL
 $kodeadmin = $_GET["ubahadmin"];
-$editadmin = mysqli_query($connection, "select * FROM admin WHERE AdminID = '$kodeadmin'");
+$editadmin = mysqli_query($connection, "SELECT * FROM admin WHERE AdminID = '$kodeadmin'");
 $rowedit = mysqli_fetch_array($editadmin);
 ?>
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -65,7 +67,7 @@ $rowedit = mysqli_fetch_array($editadmin);
 
                 <form method="POST">
                     <div class="form-group row">
-                    <label for="depanadmin" class="col-sm-2 col-form-label">Nama Depan Admin</label>
+                        <label for="depanadmin" class="col-sm-2 col-form-label">Nama Depan Admin</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" name="inputdepan" id="depanadmin" placeholder="Nama Depan Admin" value="<?php echo htmlspecialchars($rowedit["NamaDepan"]); ?>" required>
                         </div>
@@ -93,9 +95,9 @@ $rowedit = mysqli_fetch_array($editadmin);
                     </div>
 
                     <div class="form-group row">
-                        <label for="password" class="col-sm-2 col-form-label">Password Email</label>
+                        <label for="password" class="col-sm-2 col-form-label">Password Admin</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputpassword" id="password" placeholder="Password Admin" value="<?php echo htmlspecialchars($rowedit["Password"]); ?>" required>
+                            <input type="password" class="form-control" name="inputpassword" id="password" placeholder="Enter new password (leave blank to keep current)">
                         </div>
                     </div>
 
@@ -114,7 +116,6 @@ $rowedit = mysqli_fetch_array($editadmin);
                         </div>
                     </div>
                 </form>
-
             </div>
 
             <div class="col-sm-1"></div>
@@ -124,8 +125,5 @@ $rowedit = mysqli_fetch_array($editadmin);
 
 <?php include "footer.php"; ?>
 <script src="js/app.js"></script>
-<?php
-mysqli_close($connection);
-?>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
-    header("Location: menuutama.php"); // Redirect staff to main menu
+    header("Location: menuutama.php");
     exit();
 }
 ?>

@@ -1,12 +1,10 @@
 <?php
 session_start();
 if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
-    header("Location: menuutama.php"); // Redirect staff to main menu
+    header("Location: menuutama.php");
     exit();
 }
-?>
 
-<?php
 include "includes/config.php";
 
 if (isset($_POST['Simpan'])) {
@@ -14,16 +12,15 @@ if (isset($_POST['Simpan'])) {
     $belakangadmin = $_POST['inputbelakang'];
     $hp = $_POST['inputhp'];
     $email = $_POST['inputemail'];
-    $password = $_POST['inputpassword'];
+    $password = md5($_POST['inputpassword']);
     $role = $_POST['inputrole'];
 
-    if (empty($depanadmin) || empty($belakangadmin) || empty($hp) || empty($email) || empty($password)|| empty($role)) {
+    if (empty($depanadmin) || empty($belakangadmin) || empty($hp) || empty($email) || empty($password) || empty($role)) {
         echo '<h1>Anda harus mengisi semua data</h1>';
         die();
     }
 
-    // Query untuk memasukkan data ke tabel supplier
-    mysqli_query($connection, "insert into admin (NamaDepan, NamaBelakang, NoHp, Email, Password, Role) values ('$depanadmin','$belakangadmin', '$hp','$email','$password','$role')") ;
+    mysqli_query($connection, "INSERT INTO admin (NamaDepan, NamaBelakang, NoHp, Email, Password, Role) VALUES ('$depanadmin', '$belakangadmin', '$hp', '$email', '$password', '$role')");
 
     header("Location: admin.php");
     exit();
@@ -89,9 +86,9 @@ if (isset($_POST['Simpan'])) {
                     </div>
 
                     <div class="form-group row">
-                        <label for="password" class="col-sm-2 col-form-label">Password Email</label>
+                        <label for="password" class="col-sm-2 col-form-label">Password Admin</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputpassword" id="password" placeholder="Password Admin">
+                            <input type="password" class="form-control" name="inputpassword" id="password" placeholder="Password Admin">
                         </div>
                     </div>
 
@@ -115,6 +112,6 @@ if (isset($_POST['Simpan'])) {
     </div>
 </div>
 </body>
-<?php include "footer.php";?>
+<?php include "footer.php"; ?>
 <script src="js/app.js"></script>
 </html>

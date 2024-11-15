@@ -1,6 +1,5 @@
 <?php
-// Assume `$_SESSION['role']` is already set by the login process elsewhere in the application.
-$user_role = $_SESSION['Role'] ?? ''; // Fetch user role from session if it exists
+$user_role = $_SESSION['Role'] ?? ''; 
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +62,6 @@ $user_role = $_SESSION['Role'] ?? ''; // Fetch user role from session if it exis
 					</li>
 
 					<?php if ($user_role === 'owner'): ?>
-					<!-- Show this only if the user role is 'owner' -->
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="admin.php">
 							<i class="align-middle" data-feather="users"></i> <span class="align-middle">Admin</span>
@@ -72,14 +70,14 @@ $user_role = $_SESSION['Role'] ?? ''; // Fetch user role from session if it exis
 					<?php endif; ?>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="kategori.php">
+						<a class="sidebar-link" href="kategori2.php">
 							<i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
 						</a>
 					</li>
 
 					<li class="sidebar-header">Menu Perhitungan</li>
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="opname2.php">
+						<a class="sidebar-link" href="opname.php">
 							<i class="align-middle" data-feather="bar-chart"></i> <span class="align-middle">Stock Opname</span>
 						</a>
 					</li>
@@ -126,7 +124,7 @@ $user_role = $_SESSION['Role'] ?? ''; // Fetch user role from session if it exis
                 <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><?php echo $_SESSION['NamaDepan'] . ' ' . $_SESSION['NamaBelakang']; ?></span>
               </a>
 							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="logout2.php">Log out</a>
+								<a class="dropdown-item" href="logout.php">Log out</a>
 							</div>
 						</li>
 					</ul>
