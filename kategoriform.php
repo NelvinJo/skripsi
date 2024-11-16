@@ -116,7 +116,7 @@ $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10 button-group">
                             <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="SimpanSubKategori">
-                            <input type="reset" class="btn btn-secondary" value="Reset" name="Reset">
+                            <a href="kategori.php" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>
                 </form>

@@ -40,12 +40,12 @@ if (!isset($_SESSION['Email'])) {
             cursor: pointer;
             border: 1px solid #dee2e6;
             background-color: #fff;
-            color: #007bff;
+            color: #222e3c;
             border-radius: 3px;
         }
 
         .pagination button.active {
-            background-color: #007bff;
+            background-color: #222e3c;
             color: #fff;
         }
 
@@ -70,6 +70,15 @@ if (!isset($_SESSION['Email'])) {
             margin-right: 10px;
             font-weight: bold;
         }
+
+        .alert-rop {
+            background-color: #f8d7da;
+            color: #842029;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #f5c2c7;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -83,6 +92,35 @@ if (!isset($_SESSION['Email'])) {
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
                 <div class="jumbotron jumbotron-fluid"></div>
+
+                <?php
+                $alertQuery = mysqli_query($connection, "SELECT 
+                        spesifikasibarang.SpesifikasiID,
+                        barangtersedia.NamaBarang,
+                        barangtersedia.SatuanBarang,
+                        subkategori.NamaSubKategori,
+                        bentuk.NamaBentuk,
+                        warna.NamaWarna,
+                        spesifikasibarang.JumlahStokBarang,
+                        rop.Hasil
+                    FROM spesifikasibarang
+                    JOIN rop ON spesifikasibarang.SpesifikasiID = rop.SpesifikasiID
+                    JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
+                    JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
+                    JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
+                    JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
+                    WHERE spesifikasibarang.JumlahStokBarang <= rop.Hasil
+                ");
+
+                while ($alertRow = mysqli_fetch_assoc($alertQuery)) {
+                    echo "<div class='alert-rop'>
+                        <strong>Peringatan : </strong>". "</strong><strong>". htmlspecialchars($alertRow['NamaSubKategori']) . "</strong> <strong>". htmlspecialchars($alertRow['NamaBarang']) . "</strong> 
+                        dengan bentuk <strong>" . htmlspecialchars($alertRow['NamaBentuk']) . "</strong> dan warna <strong>" . htmlspecialchars($alertRow['NamaWarna']) . "</strong> 
+                        telah mencapai ROP! Stok saat ini adalah " . htmlspecialchars($alertRow['JumlahStokBarang']) . "  dengan ROP " . htmlspecialchars($alertRow['Hasil']) . ".
+                    </div>";
+                }
+                ?>
+
 
                 <div style="text-align: right; margin: 20px;">
                     <a href="tersediaform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
@@ -125,7 +163,7 @@ if (!isset($_SESSION['Email'])) {
                                         <th>Nama Sub Kategori</th>
                                         <th>Nama Barang Tersedia</th>
                                         <th>Satuan Barang Tersedia</th>
-                                        <th>Nama Tipe</th>
+                                        <th>Nama Bentuk</th>
                                         <th>Nama Warna</th>
                                         <th>Jumlah Stok Barang Tersedia</th>
                                         <th>Harga Barang Tersedia</th>

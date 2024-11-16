@@ -102,12 +102,33 @@ $conn->close();
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <?php include "header.php"; ?>
 <style>
-    body { font-family: Arial, sans-serif; }
-    #table-container { width: 80%; margin: 20px auto; text-align: center; }
-    table { width: 100%; border-collapse: collapse; }
-    table, th, td { border: 1px solid #ddd; padding: 8px; }
-    th { background-color: #f4f4f4; }
-    button { padding: 8px 12px; margin-top: 10px; cursor: pointer; }
+    body { 
+        font-family: Arial, sans-serif; 
+    }
+    #table-container { 
+        width: 80%; 
+        margin: 20px auto; 
+        text-align: center; 
+    }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+    }
+    table, th, td { 
+        border: 1px solid #ddd; 
+        padding: 8px; 
+    }
+    th { 
+        background-color: #f4f4f4; 
+    }
+    button { 
+        padding: 8px 12px; 
+        margin-top: 10px; 
+        cursor: pointer; 
+    }
+    .btn-spacing {
+        margin-bottom: 10px;
+    }
 </style>
 </head>
 <body>
@@ -138,9 +159,10 @@ $conn->close();
 
                 </tbody>
             </table>
-            <button type="submit" style="background-color: #222e3c" class="btn btn-primary" onclick="addRow()">Add Row</button>
-            <button  type="submit" style="background-color: #222e3c" class="btn btn-primary" name="save_data">Save Data</button>
+            <button type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" onclick="addRow()">Add Row</button>
+            <button  type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" name="save_data">Save Data</button>
         </form>
+        <a href="keluar.php" class="btn btn-secondary btn-spacing">Batal</a>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

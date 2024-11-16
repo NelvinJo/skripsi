@@ -45,7 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$spekID', '$leadTime', '$jumlahpermintaan', '$safetyStock', '$hasil')";
     
     if ($conn->query($sql) === TRUE) {
-        echo "Data ROP berhasil disimpan!";
+        header("Location: rop.php");
+        exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
@@ -56,48 +57,65 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
-    <title>Stock Opname</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Create ROP</title>
     <link href="css/app.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 </head>
+
 <body>
 <?php include "header.php"; ?>
-    <h2>Input Data ROP (Reorder Point)</h2>
-    <form method="post" action="">
-        <label for="spekID">Pilih Barang:</label><br>
-        <select id="spekID" name="spekID" required class="select2">
-            <option value="">--Pilih Barang--</option>
-            <?php
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo "<option value='".$row['SpesifikasiID']."'>".
-                         $row['NamaSubKategori']." - ".$row['NamaBarang']." - ".$row['NamaBentuk']." - ".$row['NamaWarna'].
-                         "</option>";
-                }
-            }
-            ?>
-        </select><br><br>
-        
-        <label for="jumlahPermintaan">Jumlah Permintaan :</label><br>
-        <input type="number" id="jumlahPermintaan" name="jumlahPermintaan" required><br><br>
 
-        <label for="leadTime">Lead Time :</label><br>
-        <input type="number" id="leadTime" name="leadTime" required><br><br>
+<main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3">Form ROP</h1>
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="spekID">Spesifikasi Barang</label>
+                        <select name="spekID" id="spekID" class="form-control" required>
+                            <option value="">--Pilih Barang--</option>
+                            <?php
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<option value='{$row['SpesifikasiID']}'>
+                                            {$row['NamaSubKategori']} - {$row['NamaBarang']} - {$row['NamaBentuk']} - {$row['NamaWarna']}
+                                          </option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
 
-        <label for="safetyStock">Safety Stock :</label><br>
-        <input type="number" id="safetyStock" name="safetyStock"><br><br>
+                    <div class="form-group">
+                        <label for="jumlahPermintaan">Jumlah Permintaan</label>
+                        <input type="number" name="jumlahPermintaan" id="jumlahPermintaan" class="form-control" required>
+                    </div>
 
-        <input type="submit" value="Hitung dan Simpan ROP">
-    </form>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2();
-        });
-    </script>
+                    <div class="form-group">
+                        <label for="leadTime">Lead Time</label>
+                        <input type="number" name="leadTime" id="leadTime" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="safetyStock">Safety Stock</label>
+                        <input type="number" name="safetyStock" id="safetyStock" class="form-control" required>
+                    </div>
+
+                    <button type="submit" style="background-color: #222e3c" class="btn btn-primary">Simpan</button>
+                    <a href="rop.php" class="btn btn-secondary">Batal</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<?php include "footer.php"; ?>
+<script src="js/app.js"></script>
 </body>
+
 </html>

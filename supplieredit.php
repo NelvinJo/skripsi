@@ -102,7 +102,7 @@ $rowedit = mysqli_fetch_array($editsupplier);
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
                             <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Edit" name="Edit">
-                            <input type="reset" class="btn btn-secondary" value="Batal" name="Batal">
+                            <a href="supplier.php" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>
                 </form>

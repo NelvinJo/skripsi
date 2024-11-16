@@ -70,7 +70,7 @@ $user_role = $_SESSION['Role'] ?? '';
 					<?php endif; ?>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="kategori2.php">
+						<a class="sidebar-link" href="kategori.php">
 							<i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
 						</a>
 					</li>

@@ -46,16 +46,20 @@ if (isset($_POST['Simpan'])) {
 <body>
 <?php include "header.php"; ?>
 
+<main class="content">
+<div class="container-fluid p-0">
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="row">
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
-                <div class="jumbotron jumbotron-fluid">
-                    <div class="container">
-                        <h1 class="display-4">Input Admin</h1>
-                    </div>
+                <div class="jumbotron jumbotron-fluid"></div>
+                
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                    <h1 class="h3 mb-3">Form Admin</h1>
                 </div>
+
                 <form method="POST">
                     <div class="form-group row">
                         <label for="depanadmin" class="col-sm-2 col-form-label">Nama Depan Admin</label>
@@ -103,7 +107,7 @@ if (isset($_POST['Simpan'])) {
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
                             <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="Simpan">
-                            <input type="reset" class="btn btn-secondary" value="Batal" name="Batal">
+                            <a href="admin.php" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>
                 </form>
@@ -111,7 +115,8 @@ if (isset($_POST['Simpan'])) {
         </div>
     </div>
 </div>
-</body>
 <?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+</main>
+</body>
 </html>
