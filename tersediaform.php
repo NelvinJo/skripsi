@@ -38,6 +38,9 @@ if (isset($_POST['Simpan'])) {
         header("Location: tersedia.php");
         exit();
     }
+    else {
+        echo "<script>alert('Data ini sudah ada. Tidak dapat diinput ulang.');</script>";
+    }
 }
 
 if (isset($_POST['SimpanBentuk'])) {

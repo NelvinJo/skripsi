@@ -86,7 +86,9 @@ if (!isset($_SESSION['Email'])) {
                         <div class="col-sm-6">
                             <input type="text" name="search" class="form-control" id="search" value="<?php if (isset($_POST['search'])) { echo htmlspecialchars($_POST['search']); } ?>" placeholder="Cari Nama Supplier">
                         </div>
-                        <input type="submit" style="background-color: #222e3c" name="kirim" class="col-sm-1 btn btn-primary" value="Search">
+                        <div class="col-sm-1">
+                            <input type="submit" style="background-color: #222e3c" name="kirim" class="btn btn-primary" value="Search">
+                        </div>
                     </div>
                 </form>
 

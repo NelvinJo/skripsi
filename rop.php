@@ -82,11 +82,13 @@ if (!isset($_SESSION['Email'])) {
 
                 <form method="POST">
                     <div class="form-group row mb-2">
-                        <label for="searchROP" class="col-sm-3">Nama Data ROP</label>
+                        <label for="search" class="col-sm-3">Nama Data ROP</label>
                         <div class="col-sm-6">
-                            <input type="text" name="searchROP" class="form-control" id="searchROP" value="<?php if (isset($_POST['searchROP'])) echo htmlspecialchars($_POST['searchROP']); ?>" placeholder="Cari Data ROP">
+                            <input type="text" name="search" class="form-control" id="search" value="<?php if (isset($_POST['search'])) echo htmlspecialchars($_POST['search']); ?>" placeholder="Cari Data ROP">
                         </div>
-                        <input type="submit" style="background-color: #222e3c" name="kirimROP" class="col-sm-1 btn btn-primary" value="Search">
+                        <div class="col-sm-1">
+                            <input type="submit" style="background-color: #222e3c" name="kirim" class="btn btn-primary" value="Search">
+                        </div>
                     </div>
                 </form>
 
@@ -125,8 +127,8 @@ if (!isset($_SESSION['Email'])) {
                                 <tbody>
                                 <?php
                                 $search = '';
-                                if (isset($_POST["kirimROP"])) {
-                                    $search = mysqli_real_escape_string($connection, $_POST['searchROP']);
+                                if (isset($_POST["kirim"])) {
+                                    $search = mysqli_real_escape_string($connection, $_POST['search']);
                                 }
 
                                 $query = mysqli_query($connection, "SELECT rop.ROPID, 

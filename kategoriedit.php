@@ -5,30 +5,43 @@ if (!isset($_SESSION['Email'])) {
     header("Location: login.php");
     exit();
 }
-?>
 
-<?php
 include "includes/config.php";
 
 if (isset($_POST['EditSub'])) {
-    if (!empty($_POST['kategoridropdown']) && !empty($_POST['inputsub'])) {
-        $kodesub = $_POST['subid'];
-        $kodekategori = $_POST['kategoridropdown'];
-        $namasub = $_POST['inputsub'];
+    $kodesub = $_POST['subid'];
+    $namakategori = trim($_POST['inputkategori']) ?? '';
+    $namasubkategori = trim($_POST['inputsub']) ?? '';
 
-        mysqli_query($connection, "UPDATE subkategori SET KategoriID='$kodekategori', NamaSubKategori='$namasub' WHERE SubID='$kodesub'");
-        
-        header("Location: kategori.php");
-        exit();
+    if (!empty($namakategori) && !empty($namasubkategori)) {
+        // Cek apakah kategori sudah ada
+        $checkKategori = mysqli_query($connection, "SELECT * FROM kategori WHERE NamaKategori = '$namakategori'");
+        if (mysqli_num_rows($checkKategori) == 0) {
+            // Tambahkan kategori baru jika tidak ada
+            mysqli_query($connection, "INSERT INTO kategori (NamaKategori) VALUES ('$namakategori')");
+        }
+
+        // Ambil ID Kategori
+        $kategoriRow = mysqli_fetch_assoc(mysqli_query($connection, "SELECT KategoriID FROM kategori WHERE NamaKategori = '$namakategori'"));
+        $kategoriID = $kategoriRow['KategoriID'];
+
+        // Cek apakah SubKategori dengan nama yang sama dan kategori yang sama sudah ada
+        $checkSubKategori = mysqli_query($connection, "SELECT * FROM subkategori WHERE NamaSubKategori = '$namasubkategori' AND KategoriID = '$kategoriID' AND SubID != '$kodesub'");
+        if (mysqli_num_rows($checkSubKategori) == 0) {
+            // Update subkategori jika tidak duplikat
+            mysqli_query($connection, "UPDATE subkategori SET KategoriID='$kategoriID', NamaSubKategori='$namasubkategori' WHERE SubID='$kodesub'");
+            header("Location: kategori.php");
+            exit();
+        } else {
+            echo "<script>alert('Data ini sudah ada. Tidak dapat diinput ulang.');</script>";
+        }
     } else {
-        echo "<h1>Anda harus memilih Kategori dan mengisi Nama Sub Kategori</h1>";
+        echo "<script>alert('Data kategori atau subkategori tidak boleh kosong.');</script>";
     }
 }
 
-$datakategori = mysqli_query($connection, "SELECT * FROM kategori");
-
 $kodesub = $_GET["ubahsub"];
-$editsub = mysqli_query($connection, "SELECT * FROM subkategori WHERE SubID = '$kodesub'");
+$editsub = mysqli_query($connection, "SELECT * FROM subkategori s JOIN kategori k ON s.KategoriID = k.KategoriID WHERE s.SubID = '$kodesub'");
 $rowsub = mysqli_fetch_array($editsub);
 
 ?>
@@ -62,23 +75,16 @@ $rowsub = mysqli_fetch_array($editsub);
                     <input type="hidden" name="subid" value="<?php echo $rowsub['SubID']; ?>">
 
                     <div class="form-group row">
-                        <label for="kategoridropdown" class="col-sm-2 col-form-label">Nama Kategori</label>
+                        <label for="inputkategori" class="col-sm-2 col-form-label">Nama Kategori</label>
                         <div class="col-sm-10">
-                            <select class="form-control" name="kategoridropdown" id="kategoridropdown">
-                                <?php while ($row = mysqli_fetch_array($datakategori)) { ?>
-                                    <option value="<?php echo $row["KategoriID"]; ?>" 
-                                        <?php echo ($row["KategoriID"] == $rowsub['KategoriID']) ? 'selected' : ''; ?>>
-                                        <?php echo $row["NamaKategori"]; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
+                            <input type="text" class="form-control" name="inputkategori" id="inputkategori" placeholder="Nama Kategori" value="<?php echo $rowsub['NamaKategori']; ?>" required>
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="inputsub" class="col-sm-2 col-form-label">Nama Sub Kategori</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputsub" id="inputsub" placeholder="Nama Sub Kategori" value="<?php echo $rowsub['NamaSubKategori']; ?>">
+                            <input type="text" class="form-control" name="inputsub" id="inputsub" placeholder="Nama Sub Kategori" value="<?php echo $rowsub['NamaSubKategori']; ?>" required>
                         </div>
                     </div>
 

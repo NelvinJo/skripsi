@@ -21,12 +21,31 @@ if (isset($_POST['Simpan'])) {
     $jumlahbarang = $_POST['jumlahbarang'];
     $hargabarang = $_POST['hargabarang'];
 
-    mysqli_query($connection, "UPDATE barangtersedia SET NamaBarang='$namabarang', SubID='$subkategori', SatuanBarang='$satuanbarang' WHERE BarangID='$barangID'");
+    $existingQuery = mysqli_query($connection, "SELECT * 
+        FROM barangtersedia 
+        JOIN spesifikasibarang 
+        ON barangtersedia.BarangID = spesifikasibarang.BarangID
+        WHERE barangtersedia.SubID = '$subkategori' 
+        AND barangtersedia.NamaBarang = '$namabarang'
+        AND spesifikasibarang.BentukID = '$kodetipe'
+        AND spesifikasibarang.WarnaID = '$kodewarna'
+        AND spesifikasibarang.SpesifikasiID != '$spekkode'");
 
-    mysqli_query($connection, "UPDATE spesifikasibarang SET BarangID='$barangID', BentukID='$kodetipe', WarnaID='$kodewarna', JumlahStokBarang='$jumlahbarang', HargaBarang='$hargabarang' WHERE SpesifikasiID='$spekkode'");
+    if (mysqli_num_rows($existingQuery) == 0) {
+        mysqli_query($connection, "UPDATE barangtersedia 
+                                   SET NamaBarang='$namabarang', SubID='$subkategori', SatuanBarang='$satuanbarang' 
+                                   WHERE BarangID='$barangID'");
 
-    header("Location: tersedia.php");
-    exit();
+        mysqli_query($connection, "UPDATE spesifikasibarang 
+                                   SET BarangID='$barangID', BentukID='$kodetipe', WarnaID='$kodewarna', 
+                                       JumlahStokBarang='$jumlahbarang', HargaBarang='$hargabarang' 
+                                   WHERE SpesifikasiID='$spekkode'");
+
+        header("Location: tersedia.php");
+        exit();
+    } else {
+        echo "<script>alert('Data ini sudah ada. Tidak dapat diinput ulang.');</script>";
+    }
 }
 
 $datasubkategori = mysqli_query($connection, "SELECT * FROM subkategori");

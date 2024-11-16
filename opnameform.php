@@ -217,5 +217,6 @@ $conn->close();
 </div>
 <?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+
 </body>
 </html>

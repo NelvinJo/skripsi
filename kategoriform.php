@@ -5,42 +5,38 @@ if (!isset($_SESSION['Email'])) {
     header("Location: login.php");
     exit();
 }
-?>
 
-<?php
 include "includes/config.php";
 
-if (isset($_POST['SimpanKategori'])) {
-    if (!empty($_POST['inputkategori'])) {
-        $namakategori = $_POST['inputkategori'];
-        
+if (isset($_POST['SimpanData'])) {
+    $namakategori = $_POST['inputkategori'] ?? '';
+    $namasubkategori = $_POST['inputsub'] ?? '';
+
+    // Validasi input tidak kosong
+    if (!empty($namakategori) && !empty($namasubkategori)) {
+        // Cek apakah NamaKategori sudah ada
         $checkKategori = mysqli_query($connection, "SELECT * FROM kategori WHERE NamaKategori = '$namakategori'");
-        
         if (mysqli_num_rows($checkKategori) == 0) {
             mysqli_query($connection, "INSERT INTO kategori (NamaKategori) VALUES ('$namakategori')");
         }
+
+        // Ambil ID Kategori setelah dimasukkan (atau yang sudah ada)
+        $kategoriRow = mysqli_fetch_assoc(mysqli_query($connection, "SELECT KategoriID FROM kategori WHERE NamaKategori = '$namakategori'"));
+        $kategoriID = $kategoriRow['KategoriID'];
+
+        // Cek apakah NamaSubKategori sudah ada
+        $checkSubKategori = mysqli_query($connection, "SELECT * FROM subkategori WHERE KategoriID = '$kategoriID' AND NamaSubKategori = '$namasubkategori'");
+        if (mysqli_num_rows($checkSubKategori) == 0) {
+            mysqli_query($connection, "INSERT INTO subkategori (KategoriID, NamaSubKategori) VALUES ('$kategoriID', '$namasubkategori')");
+            header("Location: kategori.php");
+            exit();
+        } else {
+            echo "<script>alert('Data ini sudah ada. Tidak dapat diinput ulang.');</script>";
+        }
     } else {
-        echo "<h1>Anda harus mengisi Nama Kategori</h1>";
-        die('Anda harus memasukkan data Nama Kategori');
+        echo "<script>alert('Data kategori atau subkategori tidak boleh kosong.');</script>";
     }
 }
-
-if (isset($_POST['SimpanSubKategori'])) {
-    if (!empty($_POST['kategoridropdown']) && !empty($_POST['inputsub'])) {
-        $kodekategori = $_POST['kategoridropdown'];
-        $namasub = $_POST['inputsub'];
-
-        mysqli_query($connection, "INSERT INTO subkategori (KategoriID, NamaSubKategori) VALUES ('$kodekategori', '$namasub')");
-    } else {
-        echo "<h1>Anda harus memilih Kategori dan mengisi Nama Sub Kategori</h1>";
-        die('Anda harus memasukkan datanya');
-    }
-
-    header("Location: kategori.php");
-    exit();
-}
-
-$datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 ?>
 
 <!DOCTYPE html>
@@ -64,68 +60,46 @@ $datakategori = mysqli_query($connection, "SELECT * FROM kategori");
 
 <main class="content">
 <div class="container-fluid p-0">
-<div class="container-fluid">
-    <div class="card shadow mb-4">
-        <div class="row">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-                <div class="jumbotron jumbotron-fluid"></div>
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                    <div class="jumbotron jumbotron-fluid"></div>
 
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                    <h1 class="h3 mb-3">Form Kategori</h1>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                        <h1 class="h3 mb-3">Form Kategori dan Sub Kategori</h1>
+                    </div>
+
+                    <form method="POST">
+                        <div class="form-group row">
+                            <label for="inputkategori" class="col-sm-2 col-form-label">Nama Kategori</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="inputkategori" id="inputkategori" placeholder="Nama Kategori">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="inputsub" class="col-sm-2 col-form-label">Nama Sub Kategori</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="inputsub" id="inputsub" placeholder="Nama Sub Kategori">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10 button-group">
+                                <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="SimpanData">
+                                <a href="kategori.php" class="btn btn-secondary">Batal</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-
-                <form method="POST">
-                    <div class="form-group row">
-                        <label for="inputkategori" class="col-sm-2 col-form-label">Nama Kategori</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputkategori" id="inputkategori" placeholder="Nama Kategori">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-10 button-group">
-                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="SimpanKategori">
-                            <input type="reset" class="btn btn-secondary" value="Reset" name="Reset">
-                        </div>
-                    </div>
-                </form>
-
-                <hr>
-
-                <form method="POST">
-                    <div class="form-group row">
-                        <label for="kategoridropdown" class="col-sm-2 col-form-label">Nama Kategori</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" name="kategoridropdown" id="kategoridropdown">
-                                <option value="">Pilih Kategori</option>
-                                <?php while ($row = mysqli_fetch_array($datakategori)) { ?>
-                                    <option value="<?php echo $row['KategoriID']; ?>"><?php echo $row['NamaKategori']; ?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="inputsub" class="col-sm-2 col-form-label">Nama Sub Kategori</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" name="inputsub" id="inputsub" placeholder="Nama Sub Kategori">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-10 button-group">
-                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="SimpanSubKategori">
-                            <a href="kategori.php" class="btn btn-secondary">Batal</a>
-                        </div>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 </div>
-</body>
+</main>
 <?php include "footer.php"; ?>
 <script src="js/app.js"></script>
-</main>
+</body>
 </html>

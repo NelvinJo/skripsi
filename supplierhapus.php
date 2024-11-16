@@ -8,7 +8,7 @@ if (!isset($_SESSION['Email'])) {
 ?>
 
 <?php
-	include"includes/config.php" ;
+	include "includes/config.php" ;
 	if(isset($_GET['hapussupplier']))
 	{
 		$kodesupplier = $_GET["hapussupplier"] ;
