@@ -69,7 +69,7 @@ if (isset($_POST['SimpanData'])) {
 
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                        <h1 class="h3 mb-3">Form Kategori dan Sub Kategori</h1>
+                        <h1 class="h3 mb-3">Form Kategori</h1>
                     </div>
 
                     <form method="POST">
