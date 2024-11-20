@@ -152,6 +152,7 @@ $conn->close();
         <button type="submit" style="background-color: #222e3c" class="btn btn-primary" onclick="addRow()">Add Row</button>
         <button  type="submit" style="background-color: #222e3c" class="btn btn-primary" name="save_data">Save Data</button>
     </form>
+    <a href="opname.php" class="btn btn-secondary btn-spacing">Batal</a>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

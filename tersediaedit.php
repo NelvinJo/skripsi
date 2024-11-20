@@ -138,14 +138,14 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                     <div class="form-group row">
                         <label for="jumlahbarang" class="col-sm-2 col-form-label">Jumlah Stok</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="jumlahbarang" name="jumlahbarang" value="<?php echo $rowspek['JumlahStokBarang']; ?>">
+                            <input type="number" class="form-control" id="jumlahbarang" name="jumlahbarang" min="0" value="<?php echo $rowspek['JumlahStokBarang']; ?>">
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="hargabarang" class="col-sm-2 col-form-label">Harga Barang</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="hargabarang" name="hargabarang" value="<?php echo $rowspek['HargaBarang']; ?>">
+                            <input type="number" class="form-control" id="hargabarang" name="hargabarang" min="0" value="<?php echo $rowspek['HargaBarang']; ?>">
                         </div>
                     </div>
 

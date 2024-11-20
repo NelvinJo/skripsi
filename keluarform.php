@@ -16,8 +16,7 @@ if ($conn->connect_error) {
 }
 
 $comboBoxData = [];
-$comboBoxQuery = "SELECT
-    SubKategori.NamaSubKategori,
+$comboBoxQuery = "SELECT SubKategori.NamaSubKategori,
     BarangTersedia.BarangID,
     BarangTersedia.NamaBarang,
     Bentuk.BentukID,
@@ -25,16 +24,11 @@ $comboBoxQuery = "SELECT
     Warna.WarnaID,
     Warna.NamaWarna,
     SpesifikasiBarang.SpesifikasiID
-FROM
-    SpesifikasiBarang
-JOIN
-    BarangTersedia ON SpesifikasiBarang.BarangID = BarangTersedia.BarangID
-JOIN
-    SubKategori ON BarangTersedia.SubID = SubKategori.SubID
-JOIN
-    Bentuk ON SpesifikasiBarang.BentukID = Bentuk.BentukID
-JOIN
-    Warna ON SpesifikasiBarang.WarnaID = Warna.WarnaID";
+FROM SpesifikasiBarang
+JOIN BarangTersedia ON SpesifikasiBarang.BarangID = BarangTersedia.BarangID
+JOIN SubKategori ON BarangTersedia.SubID = SubKategori.SubID
+JOIN Bentuk ON SpesifikasiBarang.BentukID = Bentuk.BentukID
+JOIN Warna ON SpesifikasiBarang.WarnaID = Warna.WarnaID";
 
 $result = $conn->query($comboBoxQuery);
 if ($result->num_rows > 0) {
@@ -47,38 +41,70 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
-    $pelanggan = $_POST['pelanggan'];
-    $tanggal_keluar = $_POST['tanggal_keluar'];
-    $spesifikasi_ids = $_POST['spesifikasi_id'];
-    $jumlah_keluar = $_POST['jumlah_keluar'];
+    $conn->begin_transaction(); // Memulai transaksi
 
-    $stmt = $conn->prepare("INSERT INTO barangkeluar (NamaPelanggan, TanggalKeluar) VALUES (?, ?)");
-    $stmt->bind_param("ss", $pelanggan, $tanggal_keluar);
-    $stmt->execute();
-    $bkid = $stmt->insert_id;
-    $stmt->close();
+    try {
+        $pelanggan = $_POST['pelanggan'];
+        $tanggal_keluar = $_POST['tanggal_keluar'];
+        $spesifikasi_ids = $_POST['spesifikasi_id'];
+        $jumlah_keluar = $_POST['jumlah_keluar'];
 
-    $stmt = $conn->prepare("INSERT INTO detailbarangkeluar (BKID, SpesifikasiID, JumlahKeluar) VALUES (?, ?, ?)");
-    $stmt->bind_param("iii", $bkid, $spesifikasi_id, $jumlah);
-
-    foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
-        $jumlah = $jumlah_keluar[$index];
+        // Insert ke tabel barangkeluar
+        $stmt = $conn->prepare("INSERT INTO barangkeluar (NamaPelanggan, TanggalKeluar) VALUES (?, ?)");
+        $stmt->bind_param("ss", $pelanggan, $tanggal_keluar);
         $stmt->execute();
+        $bkid = $stmt->insert_id;
+        $stmt->close();
 
-        $updateStockStmt = $conn->prepare("UPDATE spesifikasibarang SET JumlahStokBarang = JumlahStokBarang - ? WHERE SpesifikasiID = ?");
-        $updateStockStmt->bind_param("ii", $jumlah, $spesifikasi_id);
-        $updateStockStmt->execute();
-        $updateStockStmt->close();
+        // Prepare statement untuk detailbarangkeluar
+        $stmt = $conn->prepare("INSERT INTO detailbarangkeluar (BKID, SpesifikasiID, JumlahKeluar) VALUES (?, ?, ?)");
+        $stmt->bind_param("iii", $bkid, $spesifikasi_id, $jumlah);
+
+        foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
+            $jumlah = $jumlah_keluar[$index];
+
+            // Periksa stok barang
+            $stokQuery = $conn->prepare("SELECT JumlahStokBarang FROM spesifikasibarang WHERE SpesifikasiID = ?");
+            $stokQuery->bind_param("i", $spesifikasi_id);
+            $stokQuery->execute();
+            $stokResult = $stokQuery->get_result();
+            $stokData = $stokResult->fetch_assoc();
+            $stokQuery->close();
+
+            if ($stokData && $stokData['JumlahStokBarang'] >= $jumlah) {
+                // Insert ke detailbarangkeluar
+                $stmt->execute();
+
+                // Update stok barang
+                $updateStockStmt = $conn->prepare("UPDATE spesifikasibarang SET JumlahStokBarang = JumlahStokBarang - ? WHERE SpesifikasiID = ?");
+                $updateStockStmt->bind_param("ii", $jumlah, $spesifikasi_id);
+                $updateStockStmt->execute();
+                $updateStockStmt->close();
+            } else {
+                // Jika stok tidak mencukupi, rollback transaksi
+                throw new Exception("Stok barang tidak mencukupi");
+            }
+        }
+
+        // Commit transaksi jika semua berhasil
+        $conn->commit();
+        echo "<script>alert('Data berhasil disimpan!');</script>";
+        header("Location: keluar.php");
+        exit();
+    } catch (Exception $e) {
+        // Rollback transaksi jika terjadi kesalahan
+        $conn->rollback();
+        echo "<script>
+            alert('Gagal menyimpan data: {$e->getMessage()}');
+            window.location.href = 'keluar.php';
+        </script>";
+        exit();
     }
-
-    echo "<script>alert('Data berhasil disimpan!');</script>";
-    header("Location: keluar.php");
-    $stmt->close();
 }
+
 
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">

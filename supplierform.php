@@ -22,10 +22,17 @@ if (isset($_POST['Simpan'])) {
         die();
     }
 
-    mysqli_query($connection, "INSERT INTO supplier (NamaSupplier, NoTelp, Alamat, Kota, Provinsi) VALUES ('$namasupplier', '$telp', '$alamat', '$kota', '$provinsi')");
+    // Cek apakah NamaSupplier sudah ada
+    $existingQuery = mysqli_query($connection, "SELECT * FROM supplier WHERE NamaSupplier = '$namasupplier'");
+    if (mysqli_num_rows($existingQuery) == 0) {
+        mysqli_query($connection, "INSERT INTO supplier (NamaSupplier, NoTelp, Alamat, Kota, Provinsi) 
+                                   VALUES ('$namasupplier', '$telp', '$alamat', '$kota', '$provinsi')");
 
-    header("Location:supplier.php");
-    exit();
+        header("Location:supplier.php");
+        exit();
+    } else {
+        echo "<script>alert('Nama Supplier ini sudah ada. Tidak dapat diinput ulang.');</script>";
+    }
 }
 ?>
 <!DOCTYPE html>

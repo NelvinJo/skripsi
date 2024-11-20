@@ -32,25 +32,34 @@ $sql = "SELECT
 ";
 $result = $conn->query($sql);
 
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $spekID = $_POST['spekID'];
     $leadTime = $_POST['leadTime'];
     $jumlahpermintaan = $_POST['jumlahPermintaan'];
     $safetyStock = $_POST['safetyStock'];
 
-    $hasil = ($leadTime * $jumlahpermintaan) + $safetyStock;
+    // Pengecekan hanya untuk SpesifikasiID
+    $existingQuery = $conn->query("SELECT * FROM rop WHERE SpesifikasiID = '$spekID'");
 
-    $sql = "INSERT INTO rop (SpesifikasiID, LeadTime, JumlahPermintaan, SafetyStock, Hasil) 
-            VALUES ('$spekID', '$leadTime', '$jumlahpermintaan', '$safetyStock', '$hasil')";
-    
-    if ($conn->query($sql) === TRUE) {
-        header("Location: rop.php");
-        exit();
+    if ($existingQuery->num_rows > 0) {
+        echo "<script>alert('Data barang dan spesifikasinya sudah ada! Tidak dapat diinput ulang.');</script>";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        // Hitung hasil ROP
+        $hasil = ($leadTime * $jumlahpermintaan) + $safetyStock;
+
+        // Insert data ke dalam tabel ROP
+        $sqlInsert = "INSERT INTO rop (SpesifikasiID, LeadTime, JumlahPermintaan, SafetyStock, Hasil) 
+                      VALUES ('$spekID', '$leadTime', '$jumlahpermintaan', '$safetyStock', '$hasil')";
+        
+        if ($conn->query($sqlInsert) === TRUE) {
+            header("Location: rop.php");
+            exit();
+        } else {
+            echo "Error: " . $sqlInsert . "<br>" . $conn->error;
+        }
     }
 }
+
 
 $conn->close();
 ?>
@@ -93,17 +102,17 @@ $conn->close();
 
                     <div class="form-group">
                         <label for="jumlahPermintaan">Jumlah Permintaan</label>
-                        <input type="number" name="jumlahPermintaan" id="jumlahPermintaan" class="form-control" required>
+                        <input type="number" name="jumlahPermintaan" id="jumlahPermintaan" class="form-control" min="0" required>
                     </div>
 
                     <div class="form-group">
                         <label for="leadTime">Lead Time</label>
-                        <input type="number" name="leadTime" id="leadTime" class="form-control" required>
+                        <input type="number" name="leadTime" id="leadTime" class="form-control" min="0" required>
                     </div>
 
                     <div class="form-group">
                         <label for="safetyStock">Safety Stock</label>
-                        <input type="number" name="safetyStock" id="safetyStock" class="form-control" required>
+                        <input type="number" name="safetyStock" id="safetyStock" class="form-control" min="0" required>
                     </div>
 
                     <button type="submit" style="background-color: #222e3c" class="btn btn-primary">Simpan</button>

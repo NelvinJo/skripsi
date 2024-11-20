@@ -26,7 +26,7 @@ if (isset($_POST['Simpan'])) {
                                                 AND barangtersedia.NamaBarang = '$namabarang' 
                                                 AND spesifikasibarang.BentukID = '$bentukid' 
                                                 AND spesifikasibarang.WarnaID = '$warnaid'");
-
+    
     if (mysqli_num_rows($existingQuery) == 0) {
         mysqli_query($connection, "INSERT INTO barangtersedia (SubID, NamaBarang, SatuanBarang) 
                                    VALUES ('$subkategori', '$namabarang', '$satuanbarang')");
@@ -174,13 +174,13 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
                     <div class="form-group row">
                         <label for="jumlahbarang" class="col-sm-2 col-form-label">Jumlah Barang</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="jumlahbarang" id="jumlahbarang" placeholder="Jumlah Barang" required>
+                            <input type="number" class="form-control" name="jumlahbarang" id="jumlahbarang" placeholder="Jumlah Barang" min="0" required>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="hargabarang" class="col-sm-2 col-form-label">Harga Barang</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="hargabarang" id="hargabarang" placeholder="Harga Barang" required>
+                            <input type="number" class="form-control" name="hargabarang" id="hargabarang" placeholder="Harga Barang" min="0" required>
                         </div>
                     </div>
                     <div class="form-group row">
