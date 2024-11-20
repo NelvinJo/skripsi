@@ -8,10 +8,8 @@ if (!isset($_SESSION['Email'])) {
 
 include "includes/config.php";
 
-// Ambil id supplier yang akan diedit dari URL
 $supplierkode = $_GET['ubahsupplier'];
 
-// Ambil data supplier untuk mengisi form edit
 $query = mysqli_query($connection, "SELECT * FROM supplier WHERE SupplierID = '$supplierkode'");
 $rowedit = mysqli_fetch_assoc($query);
 
@@ -27,10 +25,8 @@ if (isset($_POST['Edit'])) {
         die("Anda harus memasukkan datanya");
     }
 
-    // Cek apakah NamaSupplier sudah ada, kecuali untuk yang sedang diedit
     $existingQuery = mysqli_query($connection, "SELECT * FROM supplier WHERE NamaSupplier = '$namasupplier' AND SupplierID != '$supplierkode'");
     if (mysqli_num_rows($existingQuery) == 0) {
-        // Jika tidak ada duplikasi, lakukan update
         mysqli_query($connection, "UPDATE supplier SET NamaSupplier='$namasupplier', NoTelp='$telp', Alamat='$alamat', Kota='$kota', Provinsi='$provinsi' WHERE SupplierID = '$supplierkode'");
 
         header("Location:supplier.php");
@@ -39,6 +35,9 @@ if (isset($_POST['Edit'])) {
         echo "<script>alert('Nama Supplier ini sudah ada. Tidak dapat diinput ulang.');</script>";
     }
 }
+$kodesupplier = $_GET["ubahsupplier"];
+$editsupplier = mysqli_query($connection, "SELECT * FROM supplier WHERE SupplierID = '$kodesupplier'");
+$rowedit = mysqli_fetch_array($editsupplier);
 ?>
 
 <!DOCTYPE html>

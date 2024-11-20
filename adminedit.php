@@ -29,10 +29,15 @@ if (isset($_POST['Edit'])) {
         $password_query = "";
     }
 
-    $query = "UPDATE admin SET NamaDepan='$depanadmin', NamaBelakang='$belakangadmin', NoHP='$hp', Email='$email', Role='$role' $password_query WHERE AdminID = '$adminkode'";
-    mysqli_query($connection, $query);
+    $existingQuery = mysqli_query($connection, "SELECT * FROM admin WHERE Email = '$email' AND AdminID != '$adminkode'");
+    if (mysqli_num_rows($existingQuery) == 0) {
+        mysqli_query($connection, "UPDATE admin SET NamaDepan='$depanadmin', NamaBelakang='$belakangadmin', NoHP='$hp', Email='$email', Password='$password', Role='$role' WHERE AdminID = '$adminkode'");
 
-    header("Location: admin.php");
+        header("Location:admin.php");
+        exit();
+    } else {
+        echo "<script>alert('Nama Admin ini sudah ada. Tidak dapat diinput ulang.');</script>";
+    }
 }
 
 $kodeadmin = $_GET["ubahadmin"];

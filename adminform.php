@@ -20,10 +20,16 @@ if (isset($_POST['Simpan'])) {
         die();
     }
 
-    mysqli_query($connection, "INSERT INTO admin (NamaDepan, NamaBelakang, NoHp, Email, Password, Role) VALUES ('$depanadmin', '$belakangadmin', '$hp', '$email', '$password', '$role')");
+    $existingQuery = mysqli_query($connection, "SELECT * FROM admin WHERE Email = '$email'");
+    if (mysqli_num_rows($existingQuery) == 0) {
+        mysqli_query($connection, "INSERT INTO admin (NamaDepan, NamaBelakang, NoHp, Email, Password, Role) 
+                                   VALUES ('$depanadmin', '$belakangadmin', '$hp', '$email', '$password', '$role')");
 
-    header("Location: admin.php");
-    exit();
+        header("Location:admin.php");
+        exit();
+    } else {
+        echo "<script>alert('Nama Admin ini sudah ada. Tidak dapat diinput ulang.');</script>";
+    }
 }
 ?>
 <!DOCTYPE html>
