@@ -22,6 +22,18 @@ if (isset($_POST['Edit'])) {
         die();
     }
 
+    // Cek apakah email sudah ada di database selain user yang sedang diedit
+    $email_check_query = "SELECT AdminID FROM admin WHERE Email = '$email' AND AdminID != '$adminkode'";
+    $email_check_result = mysqli_query($connection, $email_check_query);
+
+    if (mysqli_num_rows($email_check_result) > 0) {
+        echo "<script>alert('Nama Admin ini sudah ada. Tidak dapat diinput ulang.');
+                history.back();
+              </script>";
+        exit();
+    }
+
+    // Hash password jika ada, biarkan kosong jika tidak
     if (!empty($password)) {
         $hashed_password = md5($password);
         $password_query = ", Password='$hashed_password'";
@@ -29,15 +41,11 @@ if (isset($_POST['Edit'])) {
         $password_query = "";
     }
 
-    $existingQuery = mysqli_query($connection, "SELECT * FROM admin WHERE Email = '$email' AND AdminID != '$adminkode'");
-    if (mysqli_num_rows($existingQuery) == 0) {
-        mysqli_query($connection, "UPDATE admin SET NamaDepan='$depanadmin', NamaBelakang='$belakangadmin', NoHP='$hp', Email='$email', Password='$password', Role='$role' WHERE AdminID = '$adminkode'");
+    // Update admin data
+    $query = "UPDATE admin SET NamaDepan='$depanadmin', NamaBelakang='$belakangadmin', NoHP='$hp', Email='$email', Role='$role' $password_query WHERE AdminID = '$adminkode'";
+    mysqli_query($connection, $query);
 
-        header("Location:admin.php");
-        exit();
-    } else {
-        echo "<script>alert('Nama Admin ini sudah ada. Tidak dapat diinput ulang.');</script>";
-    }
+    header("Location: admin.php");
 }
 
 $kodeadmin = $_GET["ubahadmin"];
