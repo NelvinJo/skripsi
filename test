@@ -80,6 +80,7 @@ if (!isset($_SESSION['Email'])) {
             border-radius: 5px;
         }
 
+        /* Print styles */
         @media print {
             body * {
                 visibility: hidden;

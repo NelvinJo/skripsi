@@ -134,16 +134,16 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                             }
 
                                             $queryDetail = mysqli_query($connection, "SELECT detailstockopname.DetailOpnameID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
-                                                    bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
-                                                    detailstockopname.StokFisik, detailstockopname.Perbedaan
-                                                FROM detailstockopname
-                                                JOIN stockopname ON detailstockopname.OpnameID = stockopname.OpnameID
-                                                JOIN spesifikasibarang ON detailstockopname.SpesifikasiID = spesifikasibarang.SpesifikasiID
-                                                JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
-                                                JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
-                                                JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
-                                                JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
-                                                $queryCondition");
+                                                                        bentuk.NamaBentuk, warna.NamaWarna, detailstockopname.StokTercatat,
+                                                                        detailstockopname.StokFisik, detailstockopname.Perbedaan
+                                                                        FROM detailstockopname
+                                                                        JOIN stockopname ON detailstockopname.OpnameID = stockopname.OpnameID
+                                                                        JOIN spesifikasibarang ON detailstockopname.SpesifikasiID = spesifikasibarang.SpesifikasiID
+                                                                        JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
+                                                                        JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
+                                                                        JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
+                                                                        JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
+                                                                        WHERE stockopname.TanggalOpname = '$tanggalOpname'");
 
                                             $nomor = 1;
                                             while ($row = mysqli_fetch_assoc($queryDetail)) { ?>
@@ -154,7 +154,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                                     <td><?php echo $row['SatuanBarang']; ?></td>
                                                     <td><?php echo $row['NamaBentuk']; ?></td>
                                                     <td><?php echo $row['NamaWarna']; ?></td>
-                                                    <td><?php echo $row['JumlahStokBarang']; ?></td>
+                                                    <td><?php echo $row['StokTercatat']; ?></td> <!-- Mengambil dari StokTercatat -->
                                                     <td><?php echo $row['StokFisik']; ?></td>
                                                     <td><?php echo $row['Perbedaan']; ?></td>
                                                     <td>

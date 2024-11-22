@@ -89,7 +89,7 @@ if (!$dataROP) {
 
         <div class="row g-4">
     <div class="col-lg-6">
-        <div class="card shadow" style="background-color: #ffffff; border: 1px solid #222e3c;">
+        <div class="card shadow" style="background-color: #f4f6fa; border: 1px solid #222e3c;">
             <div class="card-body rop-scroll">
                 <h5 class="card-title mb-3">Peringatan ROP</h5>
                 <?php if (mysqli_num_rows($dataROP) > 0): ?>
@@ -110,7 +110,7 @@ if (!$dataROP) {
     </div>
 
     <div class="col-lg-6">
-        <div class="card mb-3 clickable-card shadow" onclick="location.href='opname.php'" style="cursor: pointer; background-color: #ffffff; border: 1px solid #222e3c;">
+        <div class="card mb-3 clickable-card shadow" onclick="location.href='opname.php'" style="cursor: pointer; background-color: #f4f6fa; border: 1px solid #222e3c;">
             <div class="card-body">
                 <h5 class="card-title">Opname Terakhir</h5>
                 <p class="card-text">Tanggal: <strong><?= $TanggalTerakhir; ?></strong></p>
@@ -118,7 +118,7 @@ if (!$dataROP) {
             </div>
         </div>
 
-        <div class="card mb-3 clickable-card shadow" onclick="location.href='masuk.php'" style="cursor: pointer; background-color: #ffffff; border: 1px solid #222e3c;">
+        <div class="card mb-3 clickable-card shadow" onclick="location.href='masuk.php'" style="cursor: pointer; background-color: #f4f6fa; border: 1px solid #222e3c;">
             <div class="card-body">
                 <h5 class="card-title">Barang Masuk Terakhir</h5>
                 <p class="card-text">Tanggal: <strong><?= $TanggalMasukTerakhir; ?></strong></p>
@@ -126,7 +126,7 @@ if (!$dataROP) {
             </div>
         </div>
 
-        <div class="card clickable-card shadow" onclick="location.href='keluar.php'" style="cursor: pointer; background-color: #ffffff; border: 1px solid #222e3c;">
+        <div class="card clickable-card shadow" onclick="location.href='keluar.php'" style="cursor: pointer; background-color: #f4f6fa; border: 1px solid #222e3c;">
             <div class="card-body">
                 <h5 class="card-title">Barang Keluar Terakhir</h5>
                 <p class="card-text">Tanggal: <strong><?= $TanggalKeluarTerakhir; ?></strong></p>
@@ -135,7 +135,6 @@ if (!$dataROP) {
         </div>
     </div>
 </div>
-
 </main>
 
 

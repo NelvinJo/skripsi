@@ -59,6 +59,28 @@ if (!isset($_SESSION['Email'])) {
             margin-right: 10px;
             font-weight: bold;
         }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+
+            #printArea {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            .hidden-print {
+                display: none;
+            }
+        }
+
     </style>
 </head>
 
@@ -91,6 +113,11 @@ if (!isset($_SESSION['Email'])) {
                     </div>
                 </form>
 
+                <p>
+                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Barang</button>
+                </p>
+
+                <div id="printArea">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h1 class="h3 mb-3">Tabel Barang Masuk</h1>

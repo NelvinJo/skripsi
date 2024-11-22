@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
         $stok_fisik_input = $stok_fisik[$index];
 
-        // Ambil stok awal dari SpesifikasiBarang
+        // Ambil stok awal dari SpesifikasiBarang (JumlahStokBarang)
         $stmt = $conn->prepare("SELECT JumlahStokBarang FROM SpesifikasiBarang WHERE SpesifikasiID = ?");
         $stmt->bind_param("i", $spesifikasi_id);
         $stmt->execute();
@@ -81,12 +81,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $stmt->fetch();
         $stmt->close();
 
-        // Hitung perbedaan stok
-        $perbedaan = $jumlahStokBarang - $stok_fisik_input;
+        // Simpan JumlahStokBarang ke dalam StokTercatat
+        $stokTercatat = $jumlahStokBarang; // Menyimpan nilai JumlahStokBarang saat input
 
-        // Masukkan ke tabel detailstockopname
-        $stmt = $conn->prepare("INSERT INTO detailstockopname (OpnameID, SpesifikasiID, StokFisik, Perbedaan) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("iiii", $existingOpnameID, $spesifikasi_id, $stok_fisik_input, $perbedaan);
+        // Hitung perbedaan stok
+        $perbedaan = $stokTercatat - $stok_fisik_input;
+
+        // Masukkan ke tabel detailstockopname dengan StokTercatat
+        $stmt = $conn->prepare("INSERT INTO detailstockopname (OpnameID, SpesifikasiID, StokTercatat, StokFisik, Perbedaan) 
+                                VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("iiiii", $existingOpnameID, $spesifikasi_id, $stokTercatat, $stok_fisik_input, $perbedaan);
         $stmt->execute();
         $stmt->close();
     }
@@ -94,6 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     echo "<script>alert('Stock Opname berhasil disimpan!');</script>";
     header("Location: opname.php");
 }
+
 
 
 $conn->close();
