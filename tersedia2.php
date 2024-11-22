@@ -69,15 +69,6 @@ if (!isset($_SESSION['Email'])) {
             font-weight: bold;
         }
 
-        .alert-rop {
-            background-color: #f8d7da;
-            color: #842029;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #f5c2c7;
-            border-radius: 5px;
-        }
-
         /* Tambahan untuk baris dengan stok rendah */
         .low-stock {
             background-color: #f8d7da;
@@ -115,14 +106,6 @@ if (!isset($_SESSION['Email'])) {
                     JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
                     WHERE spesifikasibarang.JumlahStokBarang <= rop.Hasil
                 ");
-
-                while ($alertRow = mysqli_fetch_assoc($alertQuery)) {
-                    echo "<div class='alert-rop'>
-                        <strong>Peringatan :</strong> <strong>" . htmlspecialchars($alertRow['NamaSubKategori']) . "</strong> <strong>" . htmlspecialchars($alertRow['NamaBarang']) . "</strong> 
-                        dengan bentuk <strong>" . htmlspecialchars($alertRow['NamaBentuk']) . "</strong> dan warna <strong>" . htmlspecialchars($alertRow['NamaWarna']) . "</strong> 
-                        telah mencapai ROP! Stok saat ini adalah " . htmlspecialchars($alertRow['JumlahStokBarang']) . " dengan ROP " . htmlspecialchars($alertRow['Hasil']) . ".
-                    </div>";
-                }
                 ?>
 
                 <div style="text-align: right; margin: 20px;">
@@ -176,52 +159,59 @@ if (!isset($_SESSION['Email'])) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                $search = '';
-                                if (isset($_POST["kirimBarang"])) {
-                                    $search = mysqli_real_escape_string($connection, $_POST['searchBarang']);
-                                }
+    <?php
+    $search = '';
+    if (isset($_POST["kirimBarang"])) {
+        $search = mysqli_real_escape_string($connection, $_POST['searchBarang']);
+    }
 
-                                $query = mysqli_query($connection, "SELECT spesifikasibarang.SpesifikasiID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
-                                                                     bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
-                                                                     spesifikasibarang.HargaBarang, rop.Hasil
-                                                             FROM spesifikasibarang
-                                                             JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
-                                                             JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
-                                                             JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
-                                                             JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
-                                                             LEFT JOIN rop ON spesifikasibarang.SpesifikasiID = rop.SpesifikasiID
-                                                             WHERE subkategori.NamaSubKategori LIKE '%$search%' 
-                                                             OR barangtersedia.NamaBarang LIKE '%$search%' 
-                                                             OR barangtersedia.SatuanBarang LIKE '%$search%' 
-                                                             OR bentuk.NamaBentuk LIKE '%$search%' 
-                                                             OR warna.NamaWarna LIKE '%$search%' 
-                                                             OR spesifikasibarang.JumlahStokBarang LIKE '%$search%'
-                                                             OR spesifikasibarang.HargaBarang LIKE '%$search%'");
+    $query = mysqli_query($connection, "SELECT spesifikasibarang.SpesifikasiID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
+                                         bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
+                                         spesifikasibarang.HargaBarang, rop.Hasil
+                                 FROM spesifikasibarang
+                                 JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
+                                 JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
+                                 JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
+                                 JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
+                                 LEFT JOIN rop ON spesifikasibarang.SpesifikasiID = rop.SpesifikasiID
+                                 WHERE subkategori.NamaSubKategori LIKE '%$search%' 
+                                 OR barangtersedia.NamaBarang LIKE '%$search%' 
+                                 OR barangtersedia.SatuanBarang LIKE '%$search%' 
+                                 OR bentuk.NamaBentuk LIKE '%$search%' 
+                                 OR warna.NamaWarna LIKE '%$search%' 
+                                 OR spesifikasibarang.JumlahStokBarang LIKE '%$search%'
+                                 OR spesifikasibarang.HargaBarang LIKE '%$search%'");
 
-                                $nomor = 1;
-                                while ($row = mysqli_fetch_array($query)) {
-                                    $lowStockClass = ($row['JumlahStokBarang'] <= $row['Hasil']) ? 'low-stock' : '';
-                                    echo "<tr class='{$lowStockClass}'>
-                                            <td>" . $nomor . "</td>
-                                            <td>" . htmlspecialchars($row['NamaSubKategori']) . "</td>
-                                            <td>" . htmlspecialchars($row['NamaBarang']) . "</td>
-                                            <td>" . htmlspecialchars($row['SatuanBarang']) . "</td>
-                                            <td>" . htmlspecialchars($row['NamaBentuk']) . "</td>
-                                            <td>" . htmlspecialchars($row['NamaWarna']) . "</td>
-                                            <td>" . htmlspecialchars($row['JumlahStokBarang']) . "</td>
-                                            <td>" . htmlspecialchars($row['HargaBarang']) . "</td>
-                                            <td>
-                                                <a href='tersediaedit.php?ubahspesifikasi=" . htmlspecialchars($row['SpesifikasiID']) . "' class='btn btn-warning btn-sm'>Edit</a>
-                                            </td>
-                                            <td>
-                                                <a href='tersediahapus.php?hapusspesifikasi=" . htmlspecialchars($row['SpesifikasiID']) . "' class='btn btn-danger btn-sm'>Delete</a>
-                                            </td>
-                                          </tr>";
-                                    $nomor++;
-                                }
-                                ?>
-                                </tbody>
+    $nomor = 1;
+    while ($row = mysqli_fetch_array($query)) {
+        $lowStockClass = ($row['JumlahStokBarang'] <= $row['Hasil']) ? 'low-stock' : '';
+        echo "<tr class='{$lowStockClass}'>
+                <td>" . $nomor . "</td>
+                <td>" . htmlspecialchars($row['NamaSubKategori']) . "</td>
+                <td>" . htmlspecialchars($row['NamaBarang']) . "</td>
+                <td>" . htmlspecialchars($row['SatuanBarang']) . "</td>
+                <td>" . htmlspecialchars($row['NamaBentuk']) . "</td>
+                <td>" . htmlspecialchars($row['NamaWarna']) . "</td>
+                <td>" . htmlspecialchars($row['JumlahStokBarang']) . "</td>
+                <td>" . htmlspecialchars($row['HargaBarang']) . "</td>
+                <td>
+                    <a href='tersediaedit.php?ubahspesifikasi=" . htmlspecialchars($row['SpesifikasiID']) . "' 
+                       style='background-color: #198754; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 14px; display: inline-flex; align-items: center;'>
+                        <img src='icon/pencil-square.svg' alt='Edit' width='16' height='16' style='margin-right: 5px;'> Edit
+                    </a>
+                </td>
+                <td>
+                    <a href='tersediahapus.php?hapusspesifikasi=" . htmlspecialchars($row['SpesifikasiID']) . "' 
+                       style='background-color: #dc3545; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 14px; display: inline-flex; align-items: center;'>
+                        <img src='icon/trash-fill.svg' alt='Delete' width='16' height='16' style='margin-right: 5px;'> Delete
+                    </a>
+                </td>
+              </tr>";
+        $nomor++;
+    }
+    ?>
+</tbody>
+
                             </table>
                         </div>
                         <div class="pagination" id="paginationControls"></div>
