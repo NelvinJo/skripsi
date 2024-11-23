@@ -52,7 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     $stok_fisik = $_POST['stok_fisik'];
     $tanggal_opname = $_POST['tanggal_opname'];
 
-    // Periksa apakah TanggalOpname sudah ada
     $stmt = $conn->prepare("SELECT OpnameID FROM stockopname WHERE TanggalOpname = ?");
     $stmt->bind_param("s", $tanggal_opname);
     $stmt->execute();
@@ -60,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
     $stmt->fetch();
     $stmt->close();
 
-    // Jika TanggalOpname belum ada, tambahkan ke tabel stockopname
     if (!$existingOpnameID) {
         $stmt = $conn->prepare("INSERT INTO stockopname (TanggalOpname) VALUES (?)");
         $stmt->bind_param("s", $tanggal_opname);
@@ -69,11 +67,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $stmt->close();
     }
 
-    // Masukkan detail ke tabel detailstockopname
     foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
         $stok_fisik_input = $stok_fisik[$index];
 
-        // Ambil stok awal dari SpesifikasiBarang (JumlahStokBarang)
         $stmt = $conn->prepare("SELECT JumlahStokBarang FROM SpesifikasiBarang WHERE SpesifikasiID = ?");
         $stmt->bind_param("i", $spesifikasi_id);
         $stmt->execute();
@@ -81,13 +77,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $stmt->fetch();
         $stmt->close();
 
-        // Simpan JumlahStokBarang ke dalam StokTercatat
-        $stokTercatat = $jumlahStokBarang; // Menyimpan nilai JumlahStokBarang saat input
+        $stokTercatat = $jumlahStokBarang;
 
-        // Hitung perbedaan stok
         $perbedaan = $stokTercatat - $stok_fisik_input;
 
-        // Masukkan ke tabel detailstockopname dengan StokTercatat
         $stmt = $conn->prepare("INSERT INTO detailstockopname (OpnameID, SpesifikasiID, StokTercatat, StokFisik, Perbedaan) 
                                 VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("iiiii", $existingOpnameID, $spesifikasi_id, $stokTercatat, $stok_fisik_input, $perbedaan);
@@ -126,16 +119,40 @@ $conn->close();
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
 <?php include "header.php"; ?>
 <style>
-    body { font-family: Arial, sans-serif; }
-    #table-container { width: 80%; margin: 20px auto; text-align: center; }
-    table { width: 100%; border-collapse: collapse; }
-    table, th, td { border: 1px solid #ddd; padding: 8px; }
-    th { background-color: #f4f4f4; }
-    button { padding: 8px 12px; margin-top: 10px; cursor: pointer; }
+    body { 
+        font-family: Arial, sans-serif; 
+    }
+    #table-container { 
+        width: 80%; 
+        margin: 20px auto; 
+        text-align: center; 
+    }
+    table { 
+        width: 100%; 
+        border-collapse: collapse; 
+    }
+    table, th, td { 
+        border: 1px solid #ddd; 
+        padding: 8px; 
+    }
+    th { 
+        background-color: #f4f4f4; 
+    }
+    button { 
+        padding: 8px 12px; 
+        margin-top: 10px; 
+        cursor: pointer; 
+    }
+
+    .btn-spacing {
+    margin-bottom: 10px;
+    }
+
 </style>
 </head>
 <body>
 <div id="table-container">
+<h1 class="h3 mb-3">Form Stock Opname</h1>
     <form method="post" id="stockOpnameForm">
             <div>
                 <label for="tanggal_opname">Tanggal Opname:</label>
@@ -145,17 +162,17 @@ $conn->close();
         <table id="dynamic-table">
             <thead>
                 <tr>
-                    <th>Data Barang & Spesifikasi</th>
+                    <th>Data Barang, Spesifikasi & Stok</th>
                     <th>Stok Fisik</th>
-                    <th>Actions</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
 
             </tbody>
         </table>
-        <button type="submit" style="background-color: #222e3c" class="btn btn-primary" onclick="addRow()">Add Row</button>
-        <button  type="submit" style="background-color: #222e3c" class="btn btn-primary" name="save_data">Save Data</button>
+        <button type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" onclick="addRow()">Tambah Data</button>
+        <button  type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" name="save_data">Simpan Data</button>
     </form>
     <a href="opname.php" class="btn btn-secondary btn-spacing">Batal</a>
 </div>
@@ -198,7 +215,7 @@ $conn->close();
 
         const actionCell = newRow.insertCell();
         const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
+        deleteButton.textContent = "Hapus";
         deleteButton.type = "button";
         deleteButton.classList.add("btn", "btn-primary");
         deleteButton.style.backgroundColor = "#222e3c";
@@ -212,6 +229,28 @@ $conn->close();
             placeholder: "Pilih Data"
         });
     }
+
+    function validateForm() {
+        const selectedOptions = [];
+        const selectElements = document.querySelectorAll("select[name='spesifikasi_id[]']");
+        
+        for (let i = 0; i < selectElements.length; i++) {
+            const value = selectElements[i].value;
+
+            if (selectedOptions.includes(value)) {
+                alert("Terdapat data barang dan spesifikasi yang sama. Mohon diperbaiki!");
+                return false;
+            }
+            selectedOptions.push(value);
+        }
+        return true;
+    }
+
+    document.getElementById("stockOpnameForm").addEventListener("submit", function (event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
 
     $(document).ready(function() {
         $('.comboBoxClass').select2({

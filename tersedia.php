@@ -71,34 +71,51 @@ if (!isset($_SESSION['Email'])) {
             font-weight: bold;
         }
 
-        .alert-rop {
+        .rop-alert {
             background-color: #f8d7da;
-            color: #842029;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #f5c2c7;
-            border-radius: 5px;
         }
 
+        .rop-normal {
+            background-color: #ffffff;
+        }
+
+
         @media print {
-            body * {
-                visibility: hidden;
-            }
+        body * {
+            visibility: hidden;
+        }
 
-            #printArea, #printArea * {
-                visibility: visible;
-            }
+        #printArea, #printArea * {
+            visibility: visible;
+        }
 
-            #printArea {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-            }
+        #printArea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
 
-            .hidden-print {
-                display: none;
-            }
+        .hidden-print,
+        .pagination,
+        .entries-container,
+        th:nth-child(9),
+        td:nth-child(9),
+        th:nth-child(10),
+        td:nth-child(10) {
+            display: none !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        table th, table td {
+            border: 1px solid #000 !important;
+            padding: 5px !important;
+            font-size: 12px !important;
+        }
         }
     </style>
 </head>
@@ -130,16 +147,7 @@ if (!isset($_SESSION['Email'])) {
                     JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
                     JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
                     JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
-                    WHERE spesifikasibarang.JumlahStokBarang <= rop.Hasil
-                ");
-
-                while ($alertRow = mysqli_fetch_assoc($alertQuery)) {
-                    echo "<div class='alert-rop'>
-                        <strong>Peringatan : </strong>". "</strong><strong>". htmlspecialchars($alertRow['NamaSubKategori']) . "</strong> <strong>". htmlspecialchars($alertRow['NamaBarang']) . "</strong> 
-                        dengan bentuk <strong>" . htmlspecialchars($alertRow['NamaBentuk']) . "</strong> dan warna <strong>" . htmlspecialchars($alertRow['NamaWarna']) . "</strong> 
-                        telah mencapai ROP! Stok saat ini adalah " . htmlspecialchars($alertRow['JumlahStokBarang']) . "  dengan ROP " . htmlspecialchars($alertRow['Hasil']) . ".
-                    </div>";
-                }
+                    WHERE spesifikasibarang.JumlahStokBarang <= rop.Hasil");
                 ?>
 
                 <div style="text-align: right; margin: 20px;">
@@ -155,13 +163,13 @@ if (!isset($_SESSION['Email'])) {
                             <input type="text" name="searchBarang" class="form-control" id="searchBarang" value="<?php if (isset($_POST['searchBarang'])) { echo htmlspecialchars($_POST['searchBarang']); } ?>" placeholder="Cari Nama Barang Tersedia">
                         </div>
                         <div class="col-sm-1">
-                            <input type="submit" style="background-color: #222e3c" name="kirimBarang" class="btn btn-primary" value="Search">
+                            <input type="submit" style="background-color: #222e3c" name="kirimBarang" class="btn btn-primary" value="Cari">
                         </div>
                     </div>
                 </form>
 
                 <p>
-                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Barang</button>
+                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Barang Tersedia</button>
                 </p>
 
                 <div id="printArea">
@@ -171,7 +179,7 @@ if (!isset($_SESSION['Email'])) {
                         </div>
                         <div class="card-body">
                             <div class="entries-container hidden-print">
-                                <label for="entriesSelect">Show entries:</label>
+                                <label for="entriesSelect">Jumlah Data :</label>
                                 <select id="entriesSelect">
                                     <option value="10" selected>10</option>
                                     <option value="30">30</option>
@@ -184,7 +192,7 @@ if (!isset($_SESSION['Email'])) {
                                 <table class="table table-bordered" id="barangTersediaTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
+                                            <th>No.</th>
                                             <th>Nama Sub Kategori</th>
                                             <th>Nama Barang Tersedia</th>
                                             <th>Satuan Barang Tersedia</th>
@@ -192,35 +200,42 @@ if (!isset($_SESSION['Email'])) {
                                             <th>Nama Warna</th>
                                             <th>Jumlah Stok Barang Tersedia</th>
                                             <th>Harga Barang Tersedia</th>
-                                            <th colspan="2" style="text-align: center;">Action</th>
+                                            <th colspan="2" style="text-align: center;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    <?php
-                                    $search = '';
+                                    <?php $search = '';
                                     if (isset($_POST["kirimBarang"])) {
                                         $search = mysqli_real_escape_string($connection, $_POST['searchBarang']);
                                     }
 
-                                    $query = mysqli_query($connection, "SELECT spesifikasibarang.SpesifikasiID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
-                                                                         bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
-                                                                         spesifikasibarang.HargaBarang
-                                                                 FROM spesifikasibarang
-                                                                 JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
-                                                                 JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
-                                                                 JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
-                                                                 JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
-                                                                 WHERE subkategori.NamaSubKategori LIKE '%$search%' 
-                                                                 OR barangtersedia.NamaBarang LIKE '%$search%' 
-                                                                 OR barangtersedia.SatuanBarang LIKE '%$search%' 
-                                                                 OR bentuk.NamaBentuk LIKE '%$search%' 
-                                                                 OR warna.NamaWarna LIKE '%$search%' 
-                                                                 OR spesifikasibarang.JumlahStokBarang LIKE '%$search%'
-                                                                 OR spesifikasibarang.HargaBarang LIKE '%$search%'");
+                                    $queryCondition = '';
+                                    if ($search !== '') {
+                                        $queryCondition = "WHERE subkategori.NamaSubKategori LIKE '%$search%' 
+                                        OR barangtersedia.NamaBarang LIKE '%$search%' 
+                                        OR barangtersedia.SatuanBarang LIKE '%$search%' 
+                                        OR bentuk.NamaBentuk LIKE '%$search%' 
+                                        OR warna.NamaWarna LIKE '%$search%' 
+                                        OR spesifikasibarang.JumlahStokBarang LIKE '%$search%'
+                                        OR spesifikasibarang.HargaBarang LIKE '%$search%'";}
+
+                                    $query = mysqli_query($connection, "SELECT spesifikasibarang.SpesifikasiID, subkategori.NamaSubKategori, 
+                                                                        barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
+                                                                        bentuk.NamaBentuk, warna.NamaWarna, spesifikasibarang.JumlahStokBarang,
+                                                                        spesifikasibarang.HargaBarang, rop.Hasil
+                                                                        FROM spesifikasibarang
+                                                                        JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
+                                                                        JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
+                                                                        JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
+                                                                        JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
+                                                                        LEFT JOIN rop ON spesifikasibarang.SpesifikasiID = rop.SpesifikasiID
+                                                                        $queryCondition
+                                                                        ORDER BY (spesifikasibarang.JumlahStokBarang <= rop.Hasil) DESC, spesifikasibarang.SpesifikasiID ASC");
 
                                     $nomor = 1;
-                                    while ($row = mysqli_fetch_array($query)) { ?>
-                                        <tr>
+                                    while ($row = mysqli_fetch_array($query)) {
+                                    $rowClass = (isset($row['Hasil']) && $row['JumlahStokBarang'] <= $row['Hasil']) ? 'rop-alert' : 'rop-normal';?>
+                                            <tr class="<?php echo $rowClass; ?>">
                                             <td><?php echo $nomor; ?></td>
                                             <td><?php echo htmlspecialchars($row['NamaSubKategori']); ?></td>
                                             <td><?php echo htmlspecialchars($row['NamaBarang']); ?></td>
@@ -230,20 +245,18 @@ if (!isset($_SESSION['Email'])) {
                                             <td><?php echo htmlspecialchars($row['JumlahStokBarang']); ?></td>
                                             <td><?php echo htmlspecialchars($row['HargaBarang']); ?></td>
                                             <td>
-                                            <a href="tersediaedit.php?ubahspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-success btn-sm" title="Edit">
-                                                <img src="icon/pencil-square.svg" alt="Edit" width="16" height="16">
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="tersediahapus.php?hapusspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
-                                                <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
-                                            </a>
-                                        </td>
-                                        </tr>
-                                    <?php
-                                        $nomor++;
-                                    }
-                                    ?>
+                                                <a href="tersediaedit.php?ubahspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-success btn-sm" title="Edit">
+                                                    <img src="icon/pencil-square.svg" alt="Edit" width="16" height="16">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="tersediahapus.php?hapusspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                                    <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
+                                                </a>
+                                            </td>
+                                            </tr>
+                                        <?php
+                                        $nomor++;}?>
                                     </tbody>
                                 </table>
                              </div>
@@ -284,7 +297,7 @@ if (!isset($_SESSION['Email'])) {
             paginationControls.innerHTML = '';
 
             const prevButton = document.createElement('button');
-            prevButton.textContent = 'Prev';
+            prevButton.textContent = 'Sebelumnya';
             prevButton.disabled = currentPage === 1;
             prevButton.classList.toggle('disabled', currentPage === 1);
             prevButton.addEventListener('click', () => {
@@ -309,7 +322,7 @@ if (!isset($_SESSION['Email'])) {
             }
 
             const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next';
+            nextButton.textContent = 'Selanjutnya';
             nextButton.disabled = currentPage === pageCount;
             nextButton.classList.toggle('disabled', currentPage === pageCount);
             nextButton.addEventListener('click', () => {

@@ -41,7 +41,7 @@ if ($result->num_rows > 0) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
-    $conn->begin_transaction(); // Memulai transaksi
+    $conn->begin_transaction();
 
     try {
         $pelanggan = $_POST['pelanggan'];
@@ -49,21 +49,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
         $spesifikasi_ids = $_POST['spesifikasi_id'];
         $jumlah_keluar = $_POST['jumlah_keluar'];
 
-        // Insert ke tabel barangkeluar
         $stmt = $conn->prepare("INSERT INTO barangkeluar (NamaPelanggan, TanggalKeluar) VALUES (?, ?)");
         $stmt->bind_param("ss", $pelanggan, $tanggal_keluar);
         $stmt->execute();
         $bkid = $stmt->insert_id;
         $stmt->close();
 
-        // Prepare statement untuk detailbarangkeluar
         $stmt = $conn->prepare("INSERT INTO detailbarangkeluar (BKID, SpesifikasiID, JumlahKeluar) VALUES (?, ?, ?)");
         $stmt->bind_param("iii", $bkid, $spesifikasi_id, $jumlah);
 
         foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
             $jumlah = $jumlah_keluar[$index];
 
-            // Periksa stok barang
             $stokQuery = $conn->prepare("SELECT JumlahStokBarang FROM spesifikasibarang WHERE SpesifikasiID = ?");
             $stokQuery->bind_param("i", $spesifikasi_id);
             $stokQuery->execute();
@@ -72,27 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
             $stokQuery->close();
 
             if ($stokData && $stokData['JumlahStokBarang'] >= $jumlah) {
-                // Insert ke detailbarangkeluar
                 $stmt->execute();
 
-                // Update stok barang
                 $updateStockStmt = $conn->prepare("UPDATE spesifikasibarang SET JumlahStokBarang = JumlahStokBarang - ? WHERE SpesifikasiID = ?");
                 $updateStockStmt->bind_param("ii", $jumlah, $spesifikasi_id);
                 $updateStockStmt->execute();
                 $updateStockStmt->close();
             } else {
-                // Jika stok tidak mencukupi, rollback transaksi
                 throw new Exception("Stok barang tidak mencukupi");
             }
         }
 
-        // Commit transaksi jika semua berhasil
         $conn->commit();
         echo "<script>alert('Data berhasil disimpan!');</script>";
         header("Location: keluar.php");
         exit();
     } catch (Exception $e) {
-        // Rollback transaksi jika terjadi kesalahan
         $conn->rollback();
         echo "<script>
             alert('Gagal menyimpan data: {$e->getMessage()}');
@@ -178,15 +170,15 @@ $conn->close();
                     <tr>
                         <th>Data Barang & Spesifikasi</th>
                         <th>Jumlah Keluar</th>
-                        <th>Actions</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
 
                 </tbody>
             </table>
-            <button type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" onclick="addRow()">Add Row</button>
-            <button  type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" name="save_data">Save Data</button>
+            <button type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" onclick="addRow()">Tambah Data</button>
+            <button  type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" name="save_data">Simpan Data</button>
         </form>
         <a href="keluar.php" class="btn btn-secondary btn-spacing">Batal</a>
     </div>
@@ -194,62 +186,84 @@ $conn->close();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
-        const comboBoxOptions = <?php echo json_encode($comboBoxData); ?>;
+    const comboBoxOptions = <?php echo json_encode($comboBoxData); ?>;
 
-        function addRow() {
-            const tableBody = document.getElementById("dynamic-table").getElementsByTagName("tbody")[0];
-            const newRow = tableBody.insertRow();
+    function addRow() {
+        const tableBody = document.getElementById("dynamic-table").getElementsByTagName("tbody")[0];
+        const newRow = tableBody.insertRow();
 
-            const comboBoxCell = newRow.insertCell();
-            const comboBoxSelect = document.createElement("select");
-            comboBoxSelect.name = "spesifikasi_id[]";
-            comboBoxSelect.required = true;
-            comboBoxSelect.classList.add("comboBoxClass");
+        const comboBoxCell = newRow.insertCell();
+        const comboBoxSelect = document.createElement("select");
+        comboBoxSelect.name = "spesifikasi_id[]";
+        comboBoxSelect.required = true;
+        comboBoxSelect.classList.add("comboBoxClass");
 
-            const defaultOption = document.createElement("option");
-            defaultOption.text = "Pilih Data";
-            defaultOption.value = "";
-            comboBoxSelect.appendChild(defaultOption);
+        const defaultOption = document.createElement("option");
+        defaultOption.text = "Pilih Data";
+        defaultOption.value = "";
+        comboBoxSelect.appendChild(defaultOption);
 
-            comboBoxOptions.forEach(option => {
-                const opt = document.createElement("option");
-                opt.value = option.SpesifikasiID;
-                opt.text = option.display;
-                comboBoxSelect.appendChild(opt);
-            });
-            comboBoxCell.appendChild(comboBoxSelect);
-
-            const jumlahCell = newRow.insertCell();
-            const jumlahInput = document.createElement("input");
-            jumlahInput.type = "number";
-            jumlahInput.name = "jumlah_keluar[]";
-            jumlahInput.min = "1";
-            jumlahInput.required = true;
-            jumlahCell.appendChild(jumlahInput);
-
-            const actionCell = newRow.insertCell();
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Delete";
-            deleteButton.type = "button";
-            deleteButton.classList.add("btn", "btn-primary");
-            deleteButton.style.backgroundColor = "#222e3c";
-            deleteButton.onclick = function () {
-            tableBody.removeChild(newRow);
-            };
-            actionCell.appendChild(deleteButton);
-
-            $(comboBoxSelect).select2({
-                width: 'resolve',
-                placeholder: "Pilih Data"
-            });
-        }
-
-        $(document).ready(function() {
-            $('.comboBoxClass').select2({
-                placeholder: "Pilih Data"
-            });
+        comboBoxOptions.forEach(option => {
+            const opt = document.createElement("option");
+            opt.value = option.SpesifikasiID;
+            opt.text = option.display;
+            comboBoxSelect.appendChild(opt);
         });
-    </script>
+        comboBoxCell.appendChild(comboBoxSelect);
+
+        const jumlahCell = newRow.insertCell();
+        const jumlahInput = document.createElement("input");
+        jumlahInput.type = "number";
+        jumlahInput.name = "jumlah_keluar[]";
+        jumlahInput.min = "1";
+        jumlahInput.required = true;
+        jumlahCell.appendChild(jumlahInput);
+
+        const actionCell = newRow.insertCell();
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Hapus";
+        deleteButton.type = "button";
+        deleteButton.classList.add("btn", "btn-primary");
+        deleteButton.style.backgroundColor = "#222e3c";
+        deleteButton.onclick = function () {
+            tableBody.removeChild(newRow);
+        };
+        actionCell.appendChild(deleteButton);
+
+        $(comboBoxSelect).select2({
+            width: 'resolve',
+            placeholder: "Pilih Data"
+        });
+    }
+
+    function validateForm() {
+        const selectedOptions = [];
+        const selectElements = document.querySelectorAll("select[name='spesifikasi_id[]']");
+        
+        for (let i = 0; i < selectElements.length; i++) {
+            const value = selectElements[i].value;
+
+            if (selectedOptions.includes(value)) {
+                alert("Terdapat data barang dan spesifikasi yang sama. Mohon diperbaiki!");
+                return false;
+            }
+            selectedOptions.push(value);
+        }
+        return true;
+    }
+
+    document.getElementById("barangKeluarForm").addEventListener("submit", function (event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
+
+    $(document).ready(function() {
+        $('.comboBoxClass').select2({
+            placeholder: "Pilih Data"
+        });
+    });
+</script>
 	<script src="js/app.js"></script>
 </body>
 </html>

@@ -91,7 +91,7 @@ $rowsub = mysqli_fetch_array($editsub);
                     <div class="form-group row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
-                            <button type="submit" class="btn btn-primary" name="EditSub">Simpan</button>
+                            <button type="submit" style="background-color: #222e3c" class="btn btn-primary" name="EditSub">Ubah</button>
                             <a href="kategori.php" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>

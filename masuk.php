@@ -76,11 +76,25 @@ if (!isset($_SESSION['Email'])) {
                 width: 100%;
             }
 
-            .hidden-print {
-                display: none;
+            .hidden-print,
+            .pagination,
+            .entries-container,
+            th:nth-child(9),
+            td:nth-child(9) {
+                display: none !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            table th, table td {
+                border: 1px solid #000 !important;
+                padding: 5px !important;
+                font-size: 12px !important;
             }
         }
-
     </style>
 </head>
 
@@ -108,13 +122,13 @@ if (!isset($_SESSION['Email'])) {
                             <input type="text" name="searchMasuk" class="form-control" id="searchMasuk" value="<?php if (isset($_POST['searchMasuk'])) { echo htmlspecialchars($_POST['searchMasuk']); } ?>" placeholder="Cari Nama Barang Masuk">
                         </div>
                         <div class="col-sm-1">
-                            <input type="submit" style="background-color: #222e3c" name="kirimMasuk" class="btn btn-primary" value="Search">
+                            <input type="submit" style="background-color: #222e3c" name="kirimMasuk" class="btn btn-primary" value="Cari">
                         </div>
                     </div>
                 </form>
 
                 <p>
-                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Barang</button>
+                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Barang Masuk</button>
                 </p>
 
                 <div id="printArea">
@@ -124,7 +138,7 @@ if (!isset($_SESSION['Email'])) {
                     </div>
                     <div class="card-body">
                         <div class="entries-container">
-                            <label for="entriesSelect">Show entries:</label>
+                            <label for="entriesSelect">Jumlah Data :</label>
                             <select id="entriesSelect">
                                 <option value="10" selected>10</option>
                                 <option value="30">30</option>
@@ -137,7 +151,7 @@ if (!isset($_SESSION['Email'])) {
                             <table class="table table-bordered" id="barangMasukTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
+                                        <th>No.</th>
                                         <th>Nama Sub Kategori</th>
                                         <th>Nama Barang</th>
                                         <th>Nama Bentuk</th>
@@ -145,7 +159,7 @@ if (!isset($_SESSION['Email'])) {
                                         <th>Jumlah Barang Masuk</th>
                                         <th>Nama Supplier</th>
                                         <th>Tanggal Barang Masuk</th>
-                                        <th style="text-align: center;">Action</th>
+                                        <th style="text-align: center;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -232,7 +246,7 @@ if (!isset($_SESSION['Email'])) {
                 paginationControls.innerHTML = '';
 
                 const prevButton = document.createElement('button');
-                prevButton.textContent = 'Prev';
+                prevButton.textContent = 'Sebelumnya';
                 prevButton.disabled = currentPage === 1;
                 prevButton.classList.toggle('disabled', currentPage === 1);
                 prevButton.addEventListener('click', () => {
@@ -257,7 +271,7 @@ if (!isset($_SESSION['Email'])) {
                 }
 
                 const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
+                nextButton.textContent = 'Selanjutnya';
                 nextButton.disabled = currentPage === pageCount;
                 nextButton.classList.toggle('disabled', currentPage === pageCount);
                 nextButton.addEventListener('click', () => {

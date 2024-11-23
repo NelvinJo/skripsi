@@ -59,7 +59,7 @@ if (isset($_POST['Simpan'])) {
 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                    <h1 class="h3 mb-3">Edit Supplier</h1>
+                    <h1 class="h3 mb-3">Form Supplier</h1>
                 </div>
 
                 <form method="POST">

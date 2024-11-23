@@ -15,7 +15,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
 <html lang="en">
 
 <head>
-    <title>Stock Opname</title>
+    <title>Detail Stock Opname</title>
     <link href="css/app.css" rel="stylesheet">
     <style>
         .pagination {
@@ -60,6 +60,45 @@ $searchDetail = $_POST['searchDetail'] ?? '';
             margin-right: 10px;
             font-weight: bold;
         }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+
+            #printArea {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            .hidden-print,
+            .pagination,
+            .entries-container,
+            th:nth-child(9),
+            td:nth-child(9) {
+                display: none !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            table th, table td {
+                border: 1px solid #000 !important;
+                padding: 5px !important;
+                font-size: 12px !important;
+            }
+            th:nth-child(10), td:nth-child(10) {
+                display: none !important;
+        }
+        }
     </style>
 </head>
 
@@ -80,11 +119,16 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                 <input type="text" name="searchDetail" class="form-control" id="searchDetail" value="<?php echo htmlspecialchars($searchDetail); ?>" placeholder="Cari Data Detail Stock Opname">
                             </div>
                             <div class="col-sm-1">
-                                <input type="submit" style="background-color: #222e3c" name="kirimDetail" class="btn btn-primary" value="Search">
+                                <input type="submit" style="background-color: #222e3c" name="kirimDetail" class="btn btn-primary" value="Cari">
                             </div>
                         </div>
                     </form>
 
+                    <p>
+                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Detail Stock Opname</button>
+                </p>
+
+                <div id="printArea">
                     <?php if (!empty($tanggalOpname)) { ?>
                         <div class="card shadow mb-4 mt-5">
                             <div class="card-header py-3">
@@ -92,7 +136,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                             </div>
                             <div class="card-body">
                                 <div class="entries-container">
-                                    <label for="entriesSelect">Show entries:</label>
+                                    <label for="entriesSelect">Jumlah Data :</label>
                                     <select id="entriesSelect">
                                         <option value="10" selected>10</option>
                                         <option value="30">30</option>
@@ -105,7 +149,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                     <table class="table table-bordered" id="detailTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
-                                                <th>No</th>
+                                                <th>No.</th>
                                                 <th>Nama Sub Kategori</th>
                                                 <th>Nama Barang</th>
                                                 <th>Satuan Barang</th>
@@ -114,7 +158,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                                 <th>Jumlah Stok Barang</th>
                                                 <th>Stok Fisik</th>
                                                 <th>Perbedaan</th>
-                                                <th>Action</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -204,7 +248,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                 paginationControls.innerHTML = '';
 
                 const prevButton = document.createElement('button');
-                prevButton.textContent = 'Prev';
+                prevButton.textContent = 'Sebelumnya';
                 prevButton.disabled = currentPage === 1;
                 prevButton.classList.toggle('disabled', currentPage === 1);
                 prevButton.addEventListener('click', () => {
@@ -227,7 +271,7 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                 }
 
                 const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
+                nextButton.textContent = 'Selanjutnya';
                 nextButton.disabled = currentPage === pageCount;
                 nextButton.classList.toggle('disabled', currentPage === pageCount);
                 nextButton.addEventListener('click', () => {

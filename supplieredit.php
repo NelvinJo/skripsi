@@ -63,7 +63,7 @@ $rowedit = mysqli_fetch_array($editsupplier);
                 <div class="col-sm-10">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h1 class="h3 mb-3">Edit Supplier</h1>
+                            <h1 class="h3 mb-3">Ubah Supplier</h1>
                         </div>
 
                         <form method="POST">
@@ -105,7 +105,7 @@ $rowedit = mysqli_fetch_array($editsupplier);
                             <div class="form-group row">
                                 <div class="col-sm-2"></div>
                                 <div class="col-sm-10">
-                                    <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Edit" name="Edit">
+                                    <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Ubah" name="Edit">
                                     <a href="supplier.php" class="btn btn-secondary">Batal</a>
                                 </div>
                             </div>

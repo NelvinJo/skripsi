@@ -56,6 +56,45 @@ if (!isset($_SESSION['Email'])) {
             margin-right: 10px;
             font-weight: bold;
         }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+
+            #printArea {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+
+            .hidden-print,
+            .pagination,
+            .entries-container,
+            th:nth-child(9),
+            td:nth-child(9) {
+                display: none !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            table th, table td {
+                border: 1px solid #000 !important;
+                padding: 5px !important;
+                font-size: 12px !important;
+            }
+            th:nth-child(3), td:nth-child(3) {
+                display: none !important;
+        }
+        }
     </style>
 </head>
 
@@ -83,18 +122,23 @@ if (!isset($_SESSION['Email'])) {
                             <input type="text" name="search" class="form-control" id="search" value="<?php echo htmlspecialchars($_POST['search'] ?? ''); ?>" placeholder="Cari Data Stock Opname">
                         </div>
                         <div class="col-sm-1">
-                            <input type="submit" style="background-color: #222e3c" name="kirim" class="btn btn-primary" value="Search">
+                            <input type="submit" style="background-color: #222e3c" name="kirim" class="btn btn-primary" value="Cari">
                         </div>
                     </div>
                 </form>
 
+                <p>
+                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Stock Opname</button>
+                </p>
+
+                <div id="printArea">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h1 class="h3 mb-3">Tabel Stock Opname</h1>
                     </div>
                     <div class="card-body">
                         <div class="entries-container">
-                            <label for="entriesSelect">Show entries:</label>
+                            <label for="entriesSelect">Jumlah Data :</label>
                             <select id="entriesSelect">
                                 <option value="10" selected>10</option>
                                 <option value="30">30</option>
@@ -107,9 +151,9 @@ if (!isset($_SESSION['Email'])) {
                             <table class="table table-bordered" id="opnameTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
+                                        <th>No.</th>
                                         <th>Tanggal Stock Opname</th>
-                                        <th>Action</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -129,7 +173,9 @@ if (!isset($_SESSION['Email'])) {
                                             <td><?php echo $nomor++; ?></td>
                                             <td><?php echo $row['TanggalOpname']; ?></td>
                                             <td>
-                                                <a href="opnamedetail.php?tanggal=<?php echo urlencode($row['TanggalOpname']); ?>" class="btn btn-info btn-sm" title="View Details">View Details</a>
+                                                <a href="opnamedetail.php?tanggal=<?php echo urlencode($row['TanggalOpname']); ?>" class="btn btn-info btn-sm">
+                                                    <img src="icon/eye-fill.svg" alt="Delete" width="16" height="16">
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -170,7 +216,7 @@ if (!isset($_SESSION['Email'])) {
                 paginationControls.innerHTML = '';
 
                 const prevButton = document.createElement('button');
-                prevButton.textContent = 'Prev';
+                prevButton.textContent = 'Sebelumnya';
                 prevButton.disabled = currentPage === 1;
                 prevButton.classList.toggle('disabled', currentPage === 1);
                 prevButton.addEventListener('click', () => {
@@ -193,7 +239,7 @@ if (!isset($_SESSION['Email'])) {
                 }
 
                 const nextButton = document.createElement('button');
-                nextButton.textContent = 'Next';
+                nextButton.textContent = 'Selanjutnya';
                 nextButton.disabled = currentPage === pageCount;
                 nextButton.classList.toggle('disabled', currentPage === pageCount);
                 nextButton.addEventListener('click', () => {

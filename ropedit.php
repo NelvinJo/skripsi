@@ -116,10 +116,19 @@ $conn->close();
 <?php include "header.php"; ?>
 
 <main class="content">
-    <div class="container-fluid p-0">
-        <h1 class="h3 mb-3"><?php echo $isEdit ? "Edit ROP" : "Form ROP"; ?></h1>
-        <div class="card">
-            <div class="card-body">
+<div class="container-fluid p-0">
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <div class="jumbotron jumbotron-fluid"></div>
+                
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                    <h1 class="h3 mb-3">Edit ROP</h1>
+                </div>
+                
                 <form method="POST">
                     <div class="form-group">
                         <label for="spesifikasiID">Spesifikasi Barang</label>

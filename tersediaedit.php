@@ -83,7 +83,7 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                    <h1 class="h3 mb-3">Edit Barang Tersedia</h1>
+                    <h1 class="h3 mb-3">Ubah Barang Tersedia</h1>
                 </div>
                     <div class="form-group row">
                         <label for="subkategori" class="col-sm-2 col-form-label">Sub Kategori</label>
@@ -152,7 +152,7 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
                     <div class="form-group row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10 button-group">
-                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="Simpan">
+                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Ubah" name="Simpan">
                             <a href="tersedia.php" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>

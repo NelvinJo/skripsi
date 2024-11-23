@@ -14,7 +14,7 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Responsive Admin & Dashboard Template based on Bootstrap 5">
-    <title>Tabel Admin</title>
+    <title>Admin</title>
 
     <link href="css/app.css" rel="stylesheet">
     <style>
@@ -60,6 +60,48 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
             margin-right: 10px;
             font-weight: bold;
         }
+
+        @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        #printArea, #printArea * {
+            visibility: visible;
+        }
+
+        #printArea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .hidden-print,
+        .pagination,
+        .entries-container,
+        th:nth-child(9),
+        td:nth-child(9),
+        th:nth-child(10),
+        td:nth-child(10) {
+            display: none !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        table th, table td {
+            border: 1px solid #000 !important;
+            padding: 5px !important;
+            font-size: 12px !important;
+        }
+        
+        th:nth-child(8), td:nth-child(8) {
+        display: none !important;
+        }
+    }
     </style>
 </head>
 
@@ -87,18 +129,23 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
                             <input type="text" name="search" class="form-control" id="search" value="<?php if (isset($_POST['search'])) { echo htmlspecialchars($_POST['search']); } ?>" placeholder="Cari Nama Admin">
                         </div>
                         <div class="col-sm-1">
-                            <input type="submit" style="background-color: #222e3c" name="kirim" class="btn btn-primary" value="Search">
+                            <input type="submit" style="background-color: #222e3c" name="kirim" class="btn btn-primary" value="Cari">
                         </div>
                     </div>
                 </form>
 
+                <p>
+                    <button class="btn btn-success hidden-print" onclick="window.print()"><i class="fa fa-print"></i> Cetak Data Admin</button>
+                </p>
+
+                <div id="printArea">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h1 class="h3 mb-3">Tabel Admin</h1>
                     </div>
                     <div class="card-body">
                         <div class="entries-container">
-                            <label for="entriesSelect">Show entries:</label>
+                            <label for="entriesSelect">Jumlah Data :</label>
                             <select id="entriesSelect">
                                 <option value="10" selected>10</option>
                                 <option value="30">30</option>
@@ -111,14 +158,14 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
                             <table class="table table-bordered" id="adminTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
+                                        <th>No.</th>
                                         <th>Nama Depan Admin</th>
                                         <th>Nama Belakang Admin</th>
                                         <th>Nomor Handphone Admin</th>
                                         <th>Email Admin</th>
                                         <th>Password Admin</th>
                                         <th>Role Admin</th>
-                                        <th colspan="2" style="text-align: center;">Action</th>
+                                        <th colspan="2" style="text-align: center;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -199,7 +246,7 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
             paginationControls.innerHTML = '';
 
             const prevButton = document.createElement('button');
-            prevButton.textContent = 'Prev';
+            prevButton.textContent = 'Sebelumnya';
             prevButton.disabled = currentPage === 1;
             prevButton.classList.toggle('disabled', currentPage === 1);
             prevButton.addEventListener('click', () => {
@@ -224,7 +271,7 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
             }
 
             const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next';
+            nextButton.textContent = 'Selanjutnya';
             nextButton.disabled = currentPage === pageCount;
             nextButton.classList.toggle('disabled', currentPage === pageCount);
             nextButton.addEventListener('click', () => {

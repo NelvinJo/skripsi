@@ -62,7 +62,7 @@ $rowedit = mysqli_fetch_array($editadmin);
     <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
     <link href="css/app.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <title>Edit Admin</title>
+    <title>Ubah Admin</title>
 </head>
 <body>
 <?php include "header.php"; ?>
@@ -78,7 +78,7 @@ $rowedit = mysqli_fetch_array($editadmin);
                 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                    <h1 class="h3 mb-3">Edit Admin</h1>
+                    <h1 class="h3 mb-3">Ubah Admin</h1>
                 </div>
 
                 <form method="POST">
@@ -127,7 +127,7 @@ $rowedit = mysqli_fetch_array($editadmin);
                     <div class="form-group row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10">
-                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Edit" name="Edit">
+                            <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Ubah" name="Edit">
                             <a href="admin.php" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>
