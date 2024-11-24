@@ -199,7 +199,8 @@ if (!isset($_SESSION['Role']) || $_SESSION['Role'] != 'owner') {
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="adminhapus.php?hapusadmin=<?php echo urlencode($row["AdminID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                            <a href="adminhapus.php?hapusadmin=<?php echo urlencode($row["AdminID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                            onclick="return confirm('Konfirmasi Penghapusan Data Admin?')">
                                                 <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                             </a>
                                         </td>

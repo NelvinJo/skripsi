@@ -200,7 +200,8 @@ if (!isset($_SESSION['Email'])) {
                                         <td><?php echo htmlspecialchars($row['NamaSupplier']); ?></td>
                                         <td><?php echo htmlspecialchars($row['TanggalMasuk']); ?></td>
                                         <td>
-                                            <a href="masukhapus.php?hapusdm=<?php echo urlencode($row["DetailMasukID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                            <a href="masukhapus.php?hapusdm=<?php echo urlencode($row["DetailMasukID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                            onclick="return confirm('Konfirmasi Penghapusan Data Barang Masuk?')">
                                                 <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                             </a>
                                         </td>

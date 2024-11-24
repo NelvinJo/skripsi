@@ -250,7 +250,8 @@ if (!isset($_SESSION['Email'])) {
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="tersediahapus.php?hapusspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                                <a href="tersediahapus.php?hapusspesifikasi=<?php echo urlencode($row["SpesifikasiID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                                onclick="return confirm('Konfirmasi Penghapusan Data Barang Tersedia?')">
                                                     <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                                 </a>
                                             </td>

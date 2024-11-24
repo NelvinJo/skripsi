@@ -25,11 +25,12 @@ $user_role = $_SESSION['Role'] ?? '';
 
 <body>
 	<div class="wrapper">
-		<nav id="sidebar" class="sidebar js-sidebar">
-			<div class="sidebar-content js-simplebar">
-				<a class="sidebar-brand" href="header.php">
-          			<span class="align-middle">Toko Arloji Pasar Baru</span>
-        		</a>
+	<nav id="sidebar" class="sidebar js-sidebar" style="background-color: #222e3c;">
+		<div class="sidebar-content js-simplebar">
+			<a class="sidebar-brand d-flex align-items-center" style="padding: 10px;">
+				<img src="img/logo.png" alt="Logo" style="width: 50px; height: 50px; margin-right: 15px; border-radius: 50%; object-fit: cover;">
+				<span class="align-middle text-white" style="font-size: 18px;">Toko Arloji Pasar Baru</span>
+			</a>
 
 				<ul class="sidebar-nav">
 					<li class="sidebar-header">Menu</li>
@@ -121,12 +122,16 @@ $user_role = $_SESSION['Role'] ?? '';
 							</div>
 
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                <img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><?php echo $_SESSION['NamaDepan'] . ' ' . $_SESSION['NamaBelakang']; ?></span>
-              </a>
-							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="logout.php">Log out</a>
-							</div>
+                				<img src="img/profile.png" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark"><?php echo $_SESSION['NamaDepan'] . ' ' . $_SESSION['NamaBelakang']; ?></span>
+              				</a>
+
+						<div class="dropdown-menu dropdown-menu-end">
+    						<a class="dropdown-item d-flex align-items-center" href="logout.php">
+        						<img src="img/door.png" alt="Logout Icon" style="width: 20px; height: 20px; margin-right: 8px;">Keluar
+    						</a>
+						</div>
 						</li>
 					</ul>
 				</div>
 			</nav>
+			

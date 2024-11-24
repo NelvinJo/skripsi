@@ -200,7 +200,8 @@ if (!isset($_SESSION['Email'])) {
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="kategorihapus.php?hapussub=<?php echo urlencode($row["SubID"]); ?>&hapuskategori=<?php echo urlencode($row["NamaKategori"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                                    <a href="kategorihapus.php?hapussub=<?php echo urlencode($row["SubID"]); ?>&hapuskategori=<?php echo urlencode($row["NamaKategori"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                                    onclick="return confirm('Konfirmasi Penghapusan Data Kategori?')">
                                                         <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                                     </a>
                                                 </td>

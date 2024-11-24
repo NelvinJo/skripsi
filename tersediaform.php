@@ -45,12 +45,26 @@ if (isset($_POST['Simpan'])) {
 
 if (isset($_POST['SimpanBentuk'])) {
     $namaBentuk = $_POST['namabentuk'];
-    mysqli_query($connection, "INSERT INTO bentuk (NamaBentuk) VALUES ('$namaBentuk')");
+    $checkBentukQuery = mysqli_query($connection, "SELECT * FROM bentuk WHERE NamaBentuk = '$namaBentuk'");
+    
+    if (mysqli_num_rows($checkBentukQuery) == 0) {
+        mysqli_query($connection, "INSERT INTO bentuk (NamaBentuk) VALUES ('$namaBentuk')");
+        echo "<script>alert('Bentuk berhasil ditambahkan.');</script>";
+    } else {
+        echo "<script>alert('Bentuk sudah ada. Tidak dapat menambahkan nama yang sama.');</script>";
+    }
 }
 
 if (isset($_POST['SimpanWarna'])) {
     $namaWarna = $_POST['namawarna'];
-    mysqli_query($connection, "INSERT INTO warna (NamaWarna) VALUES ('$namaWarna')");
+    $checkWarnaQuery = mysqli_query($connection, "SELECT * FROM warna WHERE NamaWarna = '$namaWarna'");
+    
+    if (mysqli_num_rows($checkWarnaQuery) == 0) {
+        mysqli_query($connection, "INSERT INTO warna (NamaWarna) VALUES ('$namaWarna')");
+        echo "<script>alert('Warna berhasil ditambahkan.');</script>";
+    } else {
+        echo "<script>alert('Warna sudah ada. Tidak dapat menambahkan nama yang sama.');</script>";
+    }
 }
 
 if (isset($_POST['HapusBentuk'])) {

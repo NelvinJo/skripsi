@@ -61,44 +61,47 @@ $searchDetail = $_POST['searchDetail'] ?? '';
             font-weight: bold;
         }
 
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-
-            #printArea, #printArea * {
-                visibility: visible;
-            }
-
-            #printArea {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-            }
-
-            .hidden-print,
-            .pagination,
-            .entries-container,
-            th:nth-child(9),
-            td:nth-child(9) {
-                display: none !important;
-            }
-
-            table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-            }
-
-            table th, table td {
-                border: 1px solid #000 !important;
-                padding: 5px !important;
-                font-size: 12px !important;
-            }
-            th:nth-child(10), td:nth-child(10) {
-                display: none !important;
+    @media print {
+        body * {
+            visibility: hidden;
         }
+
+        #printArea, #printArea * {
+            visibility: visible;
         }
+
+        #printArea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .hidden-print,
+        .pagination,
+        .entries-container,
+        th:nth-child(10),
+        td:nth-child(10),
+        th:nth-child(11),
+        td:nth-child(11) {
+            display: none !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        table th, table td {
+            border: 1px solid #000 !important;
+            padding: 5px !important;
+            font-size: 12px !important;
+        }
+
+        th:nth-child(9), td:nth-child(9) {
+            display: table-cell !important;
+        }
+    }
     </style>
 </head>
 
@@ -202,7 +205,8 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                                     <td><?php echo $row['StokFisik']; ?></td>
                                                     <td><?php echo $row['Perbedaan']; ?></td>
                                                     <td>
-                                                        <a href="opnamehapus.php?hapusopname=<?php echo urlencode($row["DetailOpnameID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                                        <a href="opnamehapus.php?hapusopname=<?php echo urlencode($row["DetailOpnameID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                                        onclick="return confirm('Konfirmasi Penghapusan Data Detail Stock Opname?')">
                                                             <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                                         </a>
                                                     </td>

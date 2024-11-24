@@ -196,7 +196,8 @@ if (!isset($_SESSION['Email'])) {
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="supplierhapus.php?hapussupplier=<?php echo urlencode($row["SupplierID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                            <a href="supplierhapus.php?hapussupplier=<?php echo urlencode($row["SupplierID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                            onclick="return confirm('Konfirmasi Penghapusan Data Supplier?')">
                                                 <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                             </a>
                                         </td>

@@ -61,44 +61,43 @@ if (!isset($_SESSION['Email'])) {
             font-weight: bold;
         }
 
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-
-            #printArea, #printArea * {
-                visibility: visible;
-            }
-
-            #printArea {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-            }
-
-            .hidden-print,
-            .pagination,
-            .entries-container,
-            th:nth-child(9),
-            td:nth-child(9) {
-                display: none !important;
-            }
-
-            table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-            }
-
-            table th, table td {
-                border: 1px solid #000 !important;
-                padding: 5px !important;
-                font-size: 12px !important;
-            }
-            th:nth-child(11), td:nth-child(11), th:nth-child(12), td:nth-child(12) {
-                display: none !important;
+    @media print {
+        body * {
+            visibility: hidden;
         }
+
+        #printArea, #printArea * {
+            visibility: visible;
         }
+
+        #printArea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .hidden-print,
+        .pagination,
+        .entries-container,
+        th:nth-child(11),
+        td:nth-child(11),
+        th:nth-child(12),
+        td:nth-child(12) {
+            display: none !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+        }
+
+        table th, table td {
+            border: 1px solid #000 !important;
+            padding: 5px !important;
+            font-size: 12px !important;
+        }
+    }
     </style>
 </head>
 
@@ -220,7 +219,8 @@ if (!isset($_SESSION['Email'])) {
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="rophapus.php?hapusrop=<?php echo urlencode($row["ROPID"]); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                            <a href="rophapus.php?hapusrop=<?php echo urlencode($row["ROPID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                            onclick="return confirm('Konfirmasi Penghapusan Data ROP?')">
                                                 <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
                                             </a>
                                         </td>
