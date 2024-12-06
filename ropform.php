@@ -6,7 +6,6 @@ if (!isset($_SESSION['Email'])) {
     exit();
 }
 
-// Database connection
 $host = 'localhost';
 $user = 'root';
 $password = '';
@@ -17,7 +16,6 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Fetch data for dropdown options using JOIN
 $sql = "SELECT 
         spesifikasibarang.SpesifikasiID,
         subkategori.NamaSubKategori,
@@ -38,16 +36,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jumlahpermintaan = $_POST['jumlahPermintaan'];
     $safetyStock = $_POST['safetyStock'];
 
-    // Pengecekan hanya untuk SpesifikasiID
     $existingQuery = $conn->query("SELECT * FROM rop WHERE SpesifikasiID = '$spekID'");
 
     if ($existingQuery->num_rows > 0) {
         echo "<script>alert('Data barang dan spesifikasinya sudah ada! Tidak dapat diinput ulang.');</script>";
     } else {
-        // Hitung hasil ROP
         $hasil = ($leadTime * $jumlahpermintaan) + $safetyStock;
 
-        // Insert data ke dalam tabel ROP
         $sqlInsert = "INSERT INTO rop (SpesifikasiID, LeadTime, JumlahPermintaan, SafetyStock, Hasil) 
                       VALUES ('$spekID', '$leadTime', '$jumlahpermintaan', '$safetyStock', '$hasil')";
         
@@ -59,7 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
 
 $conn->close();
 ?>
@@ -73,6 +67,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Form ROP</title>
     <link href="css/app.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -131,9 +126,16 @@ $conn->close();
         </div>
     </div>
 </main>
-
-<?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#spekID').select2({
+            placeholder: "--Pilih Barang--",
+            allowClear: true
+        });
+    });
+</script>
 </body>
-
 </html>

@@ -218,7 +218,6 @@ if (!isset($_SESSION['Email'])) {
                 </div>
                 <div class="col-sm-1"></div>
             </div>
-            <?php include "footer.php"; ?>
             <script src="js/app.js"></script>
                                     </main>
 

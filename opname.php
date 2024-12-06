@@ -110,7 +110,7 @@ if (!isset($_SESSION['Email'])) {
                 <div class="jumbotron jumbotron-fluid"></div>
 
                 <div style="text-align: right; margin: 20px;">
-                    <a href="opnameform.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+                    <a href="opnameform2.php" style="background-color: #222e3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
                         Form Tambah
                     </a>
                 </div>
@@ -189,7 +189,6 @@ if (!isset($_SESSION['Email'])) {
             </div>
         </div>
     </div>
-    <?php include "footer.php"; ?>
     <script src="js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

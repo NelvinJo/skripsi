@@ -65,6 +65,56 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
 <html>
 <head>
     <link href="css/app.css" rel="stylesheet">
+    <style>
+       .popup-form {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .popup-form input, .popup-form button, .popup-form select {
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px;
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+    .popup-form button {
+        background-color: #222e3c;
+        color: white;
+    }
+    .close-popup {
+        float: right;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .popup-form input, 
+    .popup-form button, 
+    .popup-form select, 
+    .form-control {
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.7) !important;
+    border-radius: 5px;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    </style>
 </head>
 
 <body>
@@ -161,8 +211,6 @@ $rowBarangTersedia = mysqli_fetch_array($dataBarangTersedia);
         </div>
     </div>
 </div>
-
-<?php include "footer.php"; ?>
 <script src="js/app.js"></script>
 </main>
 </body>

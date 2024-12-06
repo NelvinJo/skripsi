@@ -15,6 +15,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$supplierData = [];
+$supplierQuery = "SELECT SupplierID, NamaSupplier FROM supplier";
+$result = $conn->query($supplierQuery);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $supplierData[] = $row;
+    }
+}
+
 $comboBoxData = [];
 $comboBoxQuery = "SELECT
     SubKategori.NamaSubKategori,
@@ -24,8 +33,7 @@ $comboBoxQuery = "SELECT
     Bentuk.NamaBentuk,
     Warna.WarnaID,
     Warna.NamaWarna,
-    SpesifikasiBarang.SpesifikasiID,
-    SpesifikasiBarang.JumlahStokBarang
+    SpesifikasiBarang.SpesifikasiID
 FROM
     SpesifikasiBarang
 JOIN
@@ -42,57 +50,44 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $comboBoxData[] = [
             "SpesifikasiID" => $row["SpesifikasiID"],
-            "display" => "{$row['NamaSubKategori']} - {$row['NamaBarang']} - {$row['NamaBentuk']} - {$row['NamaWarna']} - {$row['JumlahStokBarang']}"
+            "display" => "{$row['NamaSubKategori']} - {$row['NamaBarang']} - {$row['NamaBentuk']} - {$row['NamaWarna']}"
         ];
     }
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['save_data'])) {
+    $supplier_id = $_POST['supplier_id'];
+    $tanggal_pesan = $_POST['tanggal_pesan'];
+    $tanggal_masuk = $_POST['tanggal_masuk'];
     $spesifikasi_ids = $_POST['spesifikasi_id'];
-    $stok_fisik = $_POST['stok_fisik'];
-    $tanggal_opname = $_POST['tanggal_opname'];
+    $jumlah_masuk = $_POST['jumlah_masuk'];
 
-    $stmt = $conn->prepare("SELECT OpnameID FROM stockopname WHERE TanggalOpname = ?");
-    $stmt->bind_param("s", $tanggal_opname);
+    // Insert ke tabel barangmasuk
+    $stmt = $conn->prepare("INSERT INTO barangmasuk (SupplierID, TanggalPesan, TanggalMasuk) VALUES (?, ?, ?)");
+    $stmt->bind_param("iss", $supplier_id, $tanggal_pesan, $tanggal_masuk);
     $stmt->execute();
-    $stmt->bind_result($existingOpnameID);
-    $stmt->fetch();
+    $bmid = $stmt->insert_id;
     $stmt->close();
 
-    if (!$existingOpnameID) {
-        $stmt = $conn->prepare("INSERT INTO stockopname (TanggalOpname) VALUES (?)");
-        $stmt->bind_param("s", $tanggal_opname);
-        $stmt->execute();
-        $existingOpnameID = $stmt->insert_id;
-        $stmt->close();
-    }
+    // Insert detail barangmasuk dan perhitungan LeadTime untuk ROP
+    $stmt = $conn->prepare("INSERT INTO detailbarangmasuk (BMID, SpesifikasiID, JumlahMasuk) VALUES (?, ?, ?)");
+    $stmt->bind_param("iii", $bmid, $spesifikasi_id, $jumlah);
 
     foreach ($spesifikasi_ids as $index => $spesifikasi_id) {
-        $stok_fisik_input = $stok_fisik[$index];
-
-        $stmt = $conn->prepare("SELECT JumlahStokBarang FROM SpesifikasiBarang WHERE SpesifikasiID = ?");
-        $stmt->bind_param("i", $spesifikasi_id);
+        $jumlah = $jumlah_masuk[$index];
         $stmt->execute();
-        $stmt->bind_result($jumlahStokBarang);
-        $stmt->fetch();
-        $stmt->close();
 
-        $stokTercatat = $jumlahStokBarang;
-
-        $perbedaan = $stokTercatat - $stok_fisik_input;
-
-        $stmt = $conn->prepare("INSERT INTO detailstockopname (OpnameID, SpesifikasiID, StokTercatat, StokFisik, Perbedaan) 
-                                VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiiii", $existingOpnameID, $spesifikasi_id, $stokTercatat, $stok_fisik_input, $perbedaan);
-        $stmt->execute();
-        $stmt->close();
+        // Update stok barang
+        $updateStockStmt = $conn->prepare("UPDATE spesifikasibarang SET JumlahStokBarang = JumlahStokBarang + ? WHERE SpesifikasiID = ?");
+        $updateStockStmt->bind_param("ii", $jumlah, $spesifikasi_id);
+        $updateStockStmt->execute();
+        $updateStockStmt->close();
     }
 
-    echo "<script>alert('Stock Opname berhasil disimpan!');</script>";
-    header("Location: opname.php");
+    echo "<script>alert('Data berhasil disimpan!');</script>";
+    header("Location: masuk.php");
+    $stmt->close();
 }
-
-
 
 $conn->close();
 ?>
@@ -112,7 +107,7 @@ $conn->close();
 
 	<link rel="canonical" href="https://demo-basic.adminkit.io/pages-blank.html" />
 
-	<title>Stock Opname</title>
+	<title>Barang Masuk</title>
 
 	<link href="css/app.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -143,43 +138,52 @@ $conn->close();
         margin-top: 10px; 
         cursor: pointer; 
     }
-
     .btn-spacing {
-    margin-bottom: 10px;
+        margin-bottom: 10px;
     }
-
 </style>
 </head>
 <body>
 <div id="table-container">
-<h1 class="h3 mb-3">Form Stock Opname</h1>
-    <form method="post" id="stockOpnameForm">
-            <div>
-                <label for="tanggal_opname">Tanggal Opname:</label>
-                <input type="date" name="tanggal_opname" id="tanggal_opname" required>
-            </div>
-            <br>
+    <h1 class="h3 mb-3">Form Barang Masuk</h1>
+    <form method="post" id="barangMasukForm">
+        <div>
+            <label for="supplier_id">Nama Supplier:</label>
+            <select name="supplier_id" id="supplier_id" required>
+                <?php foreach ($supplierData as $supplier): ?>
+                    <option value="<?php echo $supplier['SupplierID']; ?>">
+                        <?php echo $supplier['NamaSupplier']; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="tanggal_pesan">Tanggal Pesan:</label>
+            <input type="date" name="tanggal_pesan" id="tanggal_pesan" required>
+        </div>
+        <div>
+            <label for="tanggal_masuk">Tanggal Masuk:</label>
+            <input type="date" name="tanggal_masuk" id="tanggal_masuk" required>
+        </div>
         <table id="dynamic-table">
             <thead>
                 <tr>
-                    <th>Data Barang, Spesifikasi & Stok</th>
-                    <th>Stok Fisik</th>
+                    <th>Data Barang & Spesifikasi</th>
+                    <th>Jumlah Masuk</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
-
-            </tbody>
+            <tbody></tbody>
         </table>
-        <button type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" onclick="addRow()">Tambah Data</button>
-        <button  type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" name="save_data">Simpan Data</button>
-    </form>
-    <a href="opname.php" class="btn btn-secondary btn-spacing">Batal</a>
-</div>
+            <button type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" onclick="addRow()">Tambah Data</button>
+            <button  type="submit" style="background-color: #222e3c" class="btn btn-primary btn-spacing" name="save_data">Simpan Data</button>
+        </form>
+        <a href="masuk.php" class="btn btn-secondary btn-spacing">Batal</a>
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
     const comboBoxOptions = <?php echo json_encode($comboBoxData); ?>;
 
     function addRow() {
@@ -205,13 +209,13 @@ $conn->close();
         });
         comboBoxCell.appendChild(comboBoxSelect);
 
-        const stokFisikCell = newRow.insertCell();
-        const stokFisikInput = document.createElement("input");
-        stokFisikInput.type = "number";
-        stokFisikInput.name = "stok_fisik[]";
-        stokFisikInput.min = "0";
-        stokFisikInput.required = true;
-        stokFisikCell.appendChild(stokFisikInput);
+        const jumlahCell = newRow.insertCell();
+        const jumlahInput = document.createElement("input");
+        jumlahInput.type = "number";
+        jumlahInput.name = "jumlah_masuk[]";
+        jumlahInput.min = "1";
+        jumlahInput.required = true;
+        jumlahCell.appendChild(jumlahInput);
 
         const actionCell = newRow.insertCell();
         const deleteButton = document.createElement("button");
@@ -220,7 +224,7 @@ $conn->close();
         deleteButton.classList.add("btn", "btn-primary");
         deleteButton.style.backgroundColor = "#222e3c";
         deleteButton.onclick = function () {
-        tableBody.removeChild(newRow);
+            tableBody.removeChild(newRow);
         };
         actionCell.appendChild(deleteButton);
 
@@ -246,7 +250,7 @@ $conn->close();
         return true;
     }
 
-    document.getElementById("stockOpnameForm").addEventListener("submit", function (event) {
+    document.getElementById("barangMasukForm").addEventListener("submit", function (event) {
         if (!validateForm()) {
             event.preventDefault();
         }
@@ -258,8 +262,8 @@ $conn->close();
         });
     });
 </script>
-</div>
-</div>
-<script src="js/app.js"></script>
+
+    </div>
+	<script src="js/app.js"></script>
 </body>
 </html>

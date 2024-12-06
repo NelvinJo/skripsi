@@ -215,7 +215,6 @@ if (!isset($_SESSION['Email'])) {
             <div class="col-sm-1"></div>
         </div>
     </div>
-    <?php include "footer.php"; ?>
     <script src="js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

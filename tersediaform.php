@@ -103,9 +103,12 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
         z-index: 1000;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
-    .popup-form input, .popup-form button {
+    .popup-form input, .popup-form button, .popup-form select {
         width: 100%;
         margin-top: 10px;
+        padding: 10px;
+        border: 2px solid black;
+        border-radius: 5px;
     }
     .popup-form button {
         background-color: #222e3c;
@@ -116,6 +119,45 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
         cursor: pointer;
         font-weight: bold;
     }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .popup-form input, 
+    .popup-form button, 
+    .popup-form select, 
+    .form-control {
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.7) !important;
+    border-radius: 5px;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+   /* Ensure the dropdown sizes are the same */
+.dropdown-same {
+    flex: 1; /* Makes the dropdown take equal space */
+    max-width: 80%; /* Prevents it from expanding too much */
+}
+
+.d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.mr-2 {
+    margin-right: 10px;
+}
+
+.btn {
+    white-space: nowrap; /* Prevents text from wrapping */
+}
+
+
 </style>
 </head>
 
@@ -162,29 +204,38 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="bentukid" class="col-sm-2 col-form-label">Bentuk</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" name="bentukid" required>
-                                <?php while ($row = mysqli_fetch_array($databentuk)) { ?>
-                                    <option value="<?php echo $row["BentukID"]; ?>">
-                                        <?php echo $row["NamaBentuk"]; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="warnaid" class="col-sm-2 col-form-label">Warna</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" name="warnaid" required>
-                                <?php while ($row = mysqli_fetch_array($datawarna)) { ?>
-                                    <option value="<?php echo $row["WarnaID"]; ?>">
-                                        <?php echo $row["NamaWarna"]; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
+    <label for="bentukid" class="col-sm-2 col-form-label">Bentuk</label>
+    <div class="col-sm-10 d-flex align-items-center">
+        <select class="form-control dropdown-same mr-2" name="bentukid" required>
+            <?php while ($row = mysqli_fetch_array($databentuk)) { ?>
+                <option value="<?php echo $row["BentukID"]; ?>">
+                    <?php echo $row["NamaBentuk"]; ?>
+                </option>
+            <?php } ?>
+        </select>
+        <button type="button" style="background-color: #222e3c" onclick="openPopup('bentukForm')" class="btn btn-secondary">
+            Tambah Bentuk
+        </button>
+    </div>
+</div>
+
+<div class="form-group row">
+    <label for="warnaid" class="col-sm-2 col-form-label">Warna</label>
+    <div class="col-sm-10 d-flex align-items-center">
+        <select class="form-control dropdown-same mr-2" name="warnaid" required>
+            <?php while ($row = mysqli_fetch_array($datawarna)) { ?>
+                <option value="<?php echo $row["WarnaID"]; ?>">
+                    <?php echo $row["NamaWarna"]; ?>
+                </option>
+            <?php } ?>
+        </select>
+        <button type="button" style="background-color: #222e3c" onclick="openPopup('warnaForm')" class="btn btn-secondary">
+            Tambah Warna
+        </button>
+    </div>
+</div>
+
+
                     <div class="form-group row">
                         <label for="jumlahbarang" class="col-sm-2 col-form-label">Jumlah Barang</label>
                         <div class="col-sm-10">
@@ -202,14 +253,6 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
                         <div class="col-sm-10">
                             <input type="submit" style="background-color: #222e3c" class="btn btn-primary" value="Simpan" name="Simpan">
                             <a href="tersedia.php" class="btn btn-secondary">Batal</a>
-                        </div>
-                    </div>
-
-                    <div class="form-group row mt-3">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-10">
-                            <button type="button" style="background-color: #222e3c" onclick="openPopup('bentukForm')" class="btn btn-secondary mr-2">Form Bentuk</button>
-                            <button type="button" style="background-color: #222e3c" onclick="openPopup('warnaForm')" class="btn btn-secondary">Form Warna</button>
                         </div>
                     </div>
                 </form>
@@ -259,7 +302,6 @@ $datawarna = mysqli_query($connection, "SELECT * FROM warna");
             </div>
             <div class="col-sm-1"></div>
         </div>
-        <?php include "footer.php"; ?>
                     <script src="js/app.js"></script>
                     </main>
     </div>

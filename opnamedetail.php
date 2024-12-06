@@ -5,20 +5,46 @@ if (!isset($_SESSION['Email'])) {
     header("Location: login.php");
     exit();
 }
+
 include "includes/config.php";
 
 $tanggalOpname = $_GET['tanggal'] ?? '';
 $searchDetail = $_POST['searchDetail'] ?? '';
+
+$queryCondition = "WHERE stockopname.TanggalOpname = '$tanggalOpname'";
+
+if (!empty($searchDetail)) {
+    $safeSearch = mysqli_real_escape_string($connection, $searchDetail);
+    $queryCondition .= " AND (subkategori.NamaSubKategori LIKE '%$safeSearch%' 
+                              OR barangtersedia.NamaBarang LIKE '%$safeSearch%'
+                              OR barangtersedia.SatuanBarang LIKE '%$safeSearch%'
+                              OR bentuk.NamaBentuk LIKE '%$safeSearch%' 
+                              OR warna.NamaWarna LIKE '%$safeSearch%'
+                              OR spesifikasibarang.JumlahStokBarang LIKE '%$safeSearch%'
+                              OR detailstockopname.StokFisik LIKE '%$safeSearch%'
+                              OR detailstockopname.Perbedaan LIKE '%$safeSearch%')";
+}
+
+$queryDetail = mysqli_query($connection, "SELECT detailstockopname.DetailOpnameID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
+                                          bentuk.NamaBentuk, warna.NamaWarna, detailstockopname.StokTercatat,
+                                          detailstockopname.StokFisik, detailstockopname.Perbedaan
+                                          FROM detailstockopname
+                                          JOIN stockopname ON detailstockopname.OpnameID = stockopname.OpnameID
+                                          JOIN spesifikasibarang ON detailstockopname.SpesifikasiID = spesifikasibarang.SpesifikasiID
+                                          JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
+                                          JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
+                                          JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
+                                          JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
+                                          $queryCondition");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Detail Stock Opname</title>
     <link href="css/app.css" rel="stylesheet">
     <style>
-        .pagination {
+       .pagination {
             display: flex;
             justify-content: center;
             margin-top: 10px;
@@ -104,7 +130,6 @@ $searchDetail = $_POST['searchDetail'] ?? '';
     }
     </style>
 </head>
-
 <body>
     <?php include "header.php"; ?>
 
@@ -113,8 +138,6 @@ $searchDetail = $_POST['searchDetail'] ?? '';
             <div class="row">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-10">
-                    <div class="jumbotron jumbotron-fluid"></div>
-
                     <form method="POST">
                         <div class="form-group row mb-2">
                             <label for="searchDetail" class="col-sm-3">Nama Detail Stock Opname</label>
@@ -164,68 +187,40 @@ $searchDetail = $_POST['searchDetail'] ?? '';
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <?php
-                                            $queryCondition = "WHERE stockopname.TanggalOpname = '$tanggalOpname'";
-
-                                            if (!empty($searchDetail)) {
-                                                $safeSearch = mysqli_real_escape_string($connection, $searchDetail);
-                                                $queryCondition .= " AND ( subkategori.NamaSubKategori LIKE '%$safeSearch%' 
-                                                                        OR barangtersedia.NamaBarang LIKE '%$safeSearch%'
-                                                                        OR barangtersedia.SatuanBarang LIKE '%$safeSearch%'
-                                                                        OR bentuk.NamaBentuk LIKE '%$safeSearch%' 
-                                                                        OR warna.NamaWarna LIKE '%$safeSearch%'
-                                                                        OR spesifikasibarang.JumlahStokBarang LIKE '%$safeSearch%'
-                                                                        OR detailstockopname.StokFisik LIKE '%$safeSearch%'
-                                                                        OR detailstockopname.Perbedaan LIKE '%$safeSearch%')";
-                                            }
-
-                                            $queryDetail = mysqli_query($connection, "SELECT detailstockopname.DetailOpnameID, subkategori.NamaSubKategori, barangtersedia.NamaBarang, barangtersedia.SatuanBarang,
-                                                                        bentuk.NamaBentuk, warna.NamaWarna, detailstockopname.StokTercatat,
-                                                                        detailstockopname.StokFisik, detailstockopname.Perbedaan
-                                                                        FROM detailstockopname
-                                                                        JOIN stockopname ON detailstockopname.OpnameID = stockopname.OpnameID
-                                                                        JOIN spesifikasibarang ON detailstockopname.SpesifikasiID = spesifikasibarang.SpesifikasiID
-                                                                        JOIN barangtersedia ON spesifikasibarang.BarangID = barangtersedia.BarangID
-                                                                        JOIN subkategori ON barangtersedia.SubID = subkategori.SubID
-                                                                        JOIN bentuk ON spesifikasibarang.BentukID = bentuk.BentukID
-                                                                        JOIN warna ON spesifikasibarang.WarnaID = warna.WarnaID
-                                                                        WHERE stockopname.TanggalOpname = '$tanggalOpname'");
-
-                                            $nomor = 1;
-                                            while ($row = mysqli_fetch_assoc($queryDetail)) { ?>
-                                                <tr>
-                                                    <td><?php echo $nomor++; ?></td>
-                                                    <td><?php echo $row['NamaSubKategori']; ?></td>
-                                                    <td><?php echo $row['NamaBarang']; ?></td>
-                                                    <td><?php echo $row['SatuanBarang']; ?></td>
-                                                    <td><?php echo $row['NamaBentuk']; ?></td>
-                                                    <td><?php echo $row['NamaWarna']; ?></td>
-                                                    <td><?php echo $row['StokTercatat']; ?></td> <!-- Mengambil dari StokTercatat -->
-                                                    <td><?php echo $row['StokFisik']; ?></td>
-                                                    <td><?php echo $row['Perbedaan']; ?></td>
-                                                    <td>
-                                                        <a href="opnamehapus.php?hapusopname=<?php echo urlencode($row["DetailOpnameID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
-                                                        onclick="return confirm('Konfirmasi Penghapusan Data Detail Stock Opname?')">
-                                                            <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            <?php } ?>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                                <?php
+                                                $nomor = 1;
+                                                while ($row = mysqli_fetch_assoc($queryDetail)) { ?>
+                                                    <tr>
+                                                        <td><?php echo $nomor++; ?></td>
+                                                        <td><?php echo $row['NamaSubKategori']; ?></td>
+                                                        <td><?php echo $row['NamaBarang']; ?></td>
+                                                        <td><?php echo $row['SatuanBarang']; ?></td>
+                                                        <td><?php echo $row['NamaBentuk']; ?></td>
+                                                        <td><?php echo $row['NamaWarna']; ?></td>
+                                                        <td><?php echo $row['StokTercatat']; ?></td>
+                                                        <td><?php echo $row['StokFisik']; ?></td>
+                                                        <td><?php echo $row['Perbedaan']; ?></td>
+                                                        <td>
+                                                            <a href="opnamehapus.php?hapusopname=<?php echo urlencode($row["DetailOpnameID"]); ?>" class="btn btn-danger btn-sm" title="Delete"
+                                                            onclick="return confirm('Konfirmasi Penghapusan Data Detail Stock Opname?')">
+                                                                <img src="icon/trash-fill.svg" alt="Delete" width="16" height="16">
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-
                                 <div class="pagination" id="paginationControls"></div>
                             </div>
-                        </div>
-                    <?php } ?>
+                        <?php } ?>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
-
-    <?php include "footer.php"; ?>
     <script src="js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -297,5 +292,4 @@ $searchDetail = $_POST['searchDetail'] ?? '';
         });
     </script>
 </body>
-
 </html>

@@ -110,6 +110,8 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><?php echo $isEdit ? "Edit ROP" : "Tambah ROP"; ?></title>
     <link href="css/app.css" rel="stylesheet">
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -126,7 +128,7 @@ $conn->close();
                 
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                    <h1 class="h3 mb-3">Edit ROP</h1>
+                    <h1 class="h3 mb-3"><?php echo $isEdit ? "Edit ROP" : "Tambah ROP"; ?></h1>
                 </div>
                 
                 <form method="POST">
@@ -166,7 +168,7 @@ $conn->close();
                     </div>
 
                     <button type="submit" style="background-color: #222e3c" class="btn btn-primary">
-                        <?php echo $isEdit ? "Edit" : "Simpan"; ?>
+                        <?php echo $isEdit ? "Ubah" : "Simpan"; ?>
                     </button>
                     <a href="rop.php" class="btn btn-secondary">Batal</a>
                 </form>
@@ -174,9 +176,18 @@ $conn->close();
         </div>
     </div>
 </main>
-
-<?php include "footer.php"; ?>
 <script src="js/app.js"></script>
+<!-- Include jQuery and Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+<script>
+    // Initialize Select2
+    $(document).ready(function() {
+        $('#spesifikasiID').select2({
+            placeholder: "--Pilih Barang--",
+        });
+    });
+</script>
 </body>
 
 </html>

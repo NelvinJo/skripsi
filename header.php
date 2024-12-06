@@ -126,10 +126,12 @@ $user_role = $_SESSION['Role'] ?? '';
               				</a>
 
 						<div class="dropdown-menu dropdown-menu-end">
-    						<a class="dropdown-item d-flex align-items-center" href="logout.php">
-        						<img src="img/door.png" alt="Logout Icon" style="width: 20px; height: 20px; margin-right: 8px;">Keluar
+    						<a class="dropdown-item d-flex align-items-center" href="logout.php" 
+       						onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+        					<img src="img/door.png" alt="Logout Icon" style="width: 20px; height: 20px; margin-right: 8px;">Keluar
     						</a>
 						</div>
+
 						</li>
 					</ul>
 				</div>
